@@ -42,11 +42,12 @@ class Column {
   createColumnDeleteButton() {
     let columnDelete = document.createElement("button");
     columnDelete.setAttribute("class", "btn-delete");
+    columnDelete.setAttribute("onclick", 'this.removeColumn()');
     columnDelete.innerHTML = "x";
 
-    columnDelete.onclick = () => {
-      self.removeColumn();
-    }
+    // columnDelete.onclick = () => {
+    //   this.removeColumn();
+    // }
 
     return columnDelete;
   }
@@ -57,7 +58,7 @@ class Column {
     columnAddCard.innerHTML = "Add a card";
 
     columnAddCard.onclick = () => {
-      self.addCard(new Card(prompt("Enter the name of the card")));
+      this.addCard(new Card(prompt("Enter the name of the card")));
     }
 
     return columnAddCard;
