@@ -42,12 +42,9 @@ class Column {
   createColumnDeleteButton() {
     let columnDelete = document.createElement("button");
     columnDelete.setAttribute("class", "btn-delete");
-    columnDelete.setAttribute("onclick", 'this.removeColumn()');
     columnDelete.innerHTML = "x";
 
-    // columnDelete.onclick = () => {
-    //   this.removeColumn();
-    // }
+    
 
     return columnDelete;
   }
@@ -61,8 +58,11 @@ class Column {
       this.addCard(new Card(prompt("Enter the name of the card")));
     }
 
+
     return columnAddCard;
   }
+
+  
 }
 
 Column.prototype.addCard = function(card) {
@@ -70,7 +70,7 @@ Column.prototype.addCard = function(card) {
 }
 
 Column.prototype.removeColumn = function() {
-    this.$element.remove();
+    this$element.remove();
 }
 
 class Card {
@@ -137,4 +137,14 @@ let column = new Column(name);
 board.addColumn(column);
 });
 
+document.addEventListener('click', function(column) {
+    console.log(document.getElementsByClassName("btn-delete"));
+    Column.prototype.removeColumn(column);
+  });
 
+
+
+// $('.btn-delete').addEventListener("click", function() {
+//   console.log('test')
+//   this.removeColumn();
+// })
