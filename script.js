@@ -17,40 +17,48 @@ class Column {
   createColumn() {
     let column = document.createElement("div");
     column.setAttribute("class", "column");
-    
+    column.appendChild(createColumnTitle());
+    column.appendChild(createColumnDeleteButton());
+    column.appendChild(createColumnAddCardButton());
+    column.appendChild(creaeColumnCardList());
+    return column;
+  }
+  
+  createColumnTitle() {
     let columnTitle = document.createElement("h2");
     columnTitle.setAttribute("class", "column-title");
-    let columnTitleText = document.createTextNode(self.name);
-    columnTitle.appendChild(columnTitleText);
+    columnTitle.innerHTML(self.name);
+    return columnTitle;
+  }
 
+  createColumnCardList() {
     let columnCardList = document.createElement("ul");
     columnCardList.setAttribute("class", "column-card-list");
+    return columnCardList;
+  }
 
+  createColumnDeleteButton() {
     let columnDelete = document.createElement("button");
     columnDelete.setAttribute("class", "btn-delete");
-    let deleteButtonName = document.createTextNode("x");
-    columnDelete.appendChild(deleteButtonName);
-
-    columnDelete.onclick = () => {
-      self.removeColumn();
-    }
+    columnDelete.innerHTML("x");
+    return columnDelete;
+  }
     
+  createColumnAddCardButton() {
     let columnAddCard = document.createElement("button");
     columnDelete.setAttribute("class", "add-card");
-    let addCardButtonName = document.createTextNode("Add a card");
-    columnAddCard.appendChild(addCardButtonName);
+    columnAddCard.innerHTML("Add a card");
+    return columnAddCard;
+  }
 
     columnAddCard.onclick = () => {
       self.addCard(new Card(prompt("Enter the name of the card")));
     }
-
-    column.appendChild(columnTitle);
-    column.appendChild(columnDelete);
-    column.appendChild(columnAddCard);
-    column.appendChild(columnCardList);
-    
-    return column;
-  }
+    columnDelete.onclick = () => {
+      self.removeColumn();
+    }
+   
+  
 }
 
 Column.prototype = {
@@ -63,6 +71,3 @@ Column.prototype = {
 };
 
 
-let test = new Column('aaaa');
-
-test.createColumn();
