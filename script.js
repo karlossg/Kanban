@@ -18,11 +18,16 @@ class Column {
     let column = document.createElement("div");
     column.setAttribute("class", "column");
     
+    let columnDelete = this.createColumnDeleteButton()
+
     column.appendChild(this.createColumnTitle());
-    column.appendChild(this.createColumnDeleteButton());
+    column.appendChild(columnDelete);
     column.appendChild(this.createColumnAddCardButton());
     column.appendChild(this.createColumnCardList());
-        
+    
+    $columnDelete.click(() => {
+      this.removeColumn();
+    });
     return column;
   }
   
@@ -43,8 +48,6 @@ class Column {
     let columnDelete = document.createElement("button");
     columnDelete.setAttribute("class", "btn-delete");
     columnDelete.innerHTML = "x";
-
-    
 
     return columnDelete;
   }
@@ -133,14 +136,9 @@ $('.create-column')
 .click(function(){
 const name = prompt('Enter a column name');
 let column = new Column(name);
-
 board.addColumn(column);
 });
 
-document.addEventListener('click', function(column) {
-    console.log(document.getElementsByClassName("btn-delete"));
-    Column.prototype.removeColumn(column);
-  });
 
 
 
