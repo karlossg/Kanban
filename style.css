@@ -5,8 +5,15 @@
 
 .column {
   margin: 30px;
+  width: 300px;
+  height: 400px;
+  background-color: #e9a9a9;
 }
 
 .card-description {
   display: inline;
+}
+
+.column-card-list {
+  height: 25px;
 }

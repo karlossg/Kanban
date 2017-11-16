@@ -81,14 +81,13 @@ class Card {
 
 Card.prototype.removeCard = e => e.remove();
 
-
 const board = {
   name: 'Kanban Board',
   addColumn: function(column) {
-    this.$element.append(column.element);
+    this.element.append(column.element);
     initSortable();
   },
-  $element: $('#board .column-container')
+  element: document.querySelector('#board .column-container')
 };
 
 function initSortable() {
@@ -109,7 +108,7 @@ function randomString() {
 
 function setEventListeneres() {
   const mainBoard = document.querySelector('.board');
-  mainBoard.addEventListener('click', function (e) {
+  mainBoard.addEventListener('click', (e) => {
     if (e.target.matches('.btn-delete')) {
         const elementClicked = e.target;
         Column.prototype.removeColumn(elementClicked.parentNode);
