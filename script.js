@@ -49,12 +49,7 @@ class Column {
   }
 }
 
-Column.prototype.addCard = function(card) {
-    const parent = card.element.parentNode
-    // card.element
-    console.log(child)
-    console.log(card.element)
-}
+Column.prototype.addCard = (card, parent) => parent.appendChild(card.element);
 
 Column.prototype.removeColumn = e => e.remove();
 
@@ -70,8 +65,9 @@ class Card {
     card.className = "card";
     card.appendChild(this.createCardDescription());
     card.appendChild(this.createCardDeleteButton());
-    
+    console.log(card)
     return card;
+    
     // cardDelete.onclick = () => {
     //   self.removeCard();
     // }
@@ -80,7 +76,7 @@ class Card {
   createCardDescription() {
     let cardDescription = document.createElement("p");
     cardDescription.className = "card-description";
-    cardDescription.textContent = self.description;
+    cardDescription.textContent = this.name;
     return cardDescription;
   }
   
@@ -92,9 +88,7 @@ class Card {
   }
 }
 
-Card.prototype.removeCard = function() {
-		this.$element.remove();
-}
+Card.prototype.removeCard = e => e.remove();
 
 
 let board = {
@@ -148,8 +142,8 @@ function setEventListeneres() {
     if (addCardButtonsArr[i].getAttribute('listener') !== 'true') {
     addCardButtonsArr[i].addEventListener('click', function (e) {
       const elementClicked = e.target;
-        elementClicked.setAttribute('listener', 'true')
-        Column.prototype.addCard(new Card(prompt("Enter the name of the card")));
+      elementClicked.setAttribute('listener', 'true')
+      Column.prototype.addCard(new Card(prompt("Enter the name of the card")), elementClicked.parentNode.children[3]);
     });
   }
   }
