@@ -10,12 +10,10 @@ class Column {
   createColumn() {
     let column = document.createElement("div");
     column.className = "column";
-    
     column.appendChild(this.createColumnTitle());
     column.appendChild(this.createColumnDeleteButton());
     column.appendChild(this.createColumnAddCardButton());
     column.appendChild(this.createColumnCardList());
-    
     return column;
   }
   
@@ -36,7 +34,6 @@ class Column {
     let columnDelete = document.createElement("button");
     columnDelete.className = "btn-delete";
     columnDelete.textContent = "x";
-    
     return columnDelete;
   }
     
@@ -44,7 +41,6 @@ class Column {
     let columnAddCard = document.createElement("button");
     columnAddCard.className = "add-card";
     columnAddCard.textContent = "Add a card";
-
     return columnAddCard;
   }
 }
@@ -65,12 +61,7 @@ class Card {
     card.className = "card";
     card.appendChild(this.createCardDescription());
     card.appendChild(this.createCardDeleteButton());
-    console.log(card)
     return card;
-    
-    // cardDelete.onclick = () => {
-    //   self.removeCard();
-    // }
   }
   
   createCardDescription() {
@@ -91,12 +82,11 @@ class Card {
 Card.prototype.removeCard = e => e.remove();
 
 
-let board = {
+const board = {
   name: 'Kanban Board',
   addColumn: function(column) {
     this.$element.append(column.element);
     initSortable();
-    setEventListeneres();
   },
   $element: $('#board .column-container')
 };
@@ -108,13 +98,6 @@ function initSortable() {
   }).disableSelection();
 }
 
-$('.create-column')
-.click(function(){
-const name = prompt('Enter a column name');
-let column = new Column(name);
-board.addColumn(column);
-});
-
 function randomString() {
   const chars = '0123456789abcdefghiklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXTZ';
   let str = '';
@@ -125,44 +108,38 @@ function randomString() {
 }
 
 function setEventListeneres() {
-  const deleteButtonsArr = document.getElementsByClassName('btn-delete');
-  const deleteButtonsArrLength = deleteButtonsArr.length;
-
-  const addCardButtonsArr = document.getElementsByClassName('add-card');
-  const addCardButtonsArrLength = addCardButtonsArr.length;
-
-  for (var i = 0; i < deleteButtonsArrLength; i++) {
-    deleteButtonsArr[i].addEventListener('click', function (e) {
-      const elementClicked = e.target;
-      Column.prototype.removeColumn(elementClicked.parentNode);
-    });
-  }
-
-  for (var i = 0; i < addCardButtonsArrLength; i++) {
-    if (addCardButtonsArr[i].getAttribute('listener') !== 'true') {
-    addCardButtonsArr[i].addEventListener('click', function (e) {
-      const elementClicked = e.target;
-      elementClicked.setAttribute('listener', 'true');
-      Column.prototype.addCard(new Card(prompt("Enter the name of the card")), elementClicked.parentNode.children[3]);
-    });
-  }
-  }
+  const mainBoard = document.querySelector('.board');
+  mainBoard.addEventListener('click', function (e) {
+    if (e.target.matches('.btn-delete')) {
+        const elementClicked = e.target;
+        Column.prototype.removeColumn(elementClicked.parentNode);
+    } else if (e.target.matches('.add-card')) {
+        const elementClicked = e.target;
+        Column.prototype.addCard(new Card(prompt("Enter the name of the card")), elementClicked.parentNode.children[3]);
+    } else if (e.target.matches('.create-column')) {
+        const name = prompt('Enter a column name');
+        const column = new Column(name);
+        board.addColumn(column);
+    }
+  });
 }
 
-// var todoColumn = new Column('To do');
-var doingColumn = new Column('Doing');
-var doneColumn = new Column('Done');
+setEventListeneres();
+
+const todoColumn = new Column('To do');
+const doingColumn = new Column('Doing');
+const doneColumn = new Column('Done');
 
 // ADDING COLUMNS TO THE BOARD
-board.addColumn(new Column('To do'));
+board.addColumn(todoColumn);
 board.addColumn(doingColumn);
 board.addColumn(doneColumn);
 
 // CREATING CARDS
-var card1 = new Card('New task');
-var card2 = new Card('Create kanban boards');
+const card1 = new Card('New task');
+const card2 = new Card('Create kanban boards');
 
 // ADDING CARDS TO COLUMNS
-// todoColumn.addCard(card1, todoColumn.element.childNodes[3]);
-// doingColumn.addCard(card2, doingColumn.element.childNodes[3]);
+todoColumn.addCard(card1, todoColumn.element.childNodes[3]);
+doingColumn.addCard(card2, doingColumn.element.childNodes[3]);
 
