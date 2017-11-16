@@ -96,6 +96,7 @@ let board = {
   addColumn: function(column) {
     this.$element.append(column.element);
     initSortable();
+    setEventListeneres();
   },
   $element: $('#board .column-container')
 };
@@ -112,7 +113,6 @@ $('.create-column')
 const name = prompt('Enter a column name');
 let column = new Column(name);
 board.addColumn(column);
-setEventListeneres();
 });
 
 function randomString() {
@@ -142,10 +142,27 @@ function setEventListeneres() {
     if (addCardButtonsArr[i].getAttribute('listener') !== 'true') {
     addCardButtonsArr[i].addEventListener('click', function (e) {
       const elementClicked = e.target;
-      elementClicked.setAttribute('listener', 'true')
+      elementClicked.setAttribute('listener', 'true');
       Column.prototype.addCard(new Card(prompt("Enter the name of the card")), elementClicked.parentNode.children[3]);
     });
   }
   }
 }
+
+// var todoColumn = new Column('To do');
+var doingColumn = new Column('Doing');
+var doneColumn = new Column('Done');
+
+// ADDING COLUMNS TO THE BOARD
+board.addColumn(new Column('To do'));
+board.addColumn(doingColumn);
+board.addColumn(doneColumn);
+
+// CREATING CARDS
+var card1 = new Card('New task');
+var card2 = new Card('Create kanban boards');
+
+// ADDING CARDS TO COLUMNS
+// todoColumn.addCard(card1, todoColumn.element.childNodes[3]);
+// doingColumn.addCard(card2, doingColumn.element.childNodes[3]);
 
