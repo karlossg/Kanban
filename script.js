@@ -50,16 +50,13 @@ class Column {
 }
 
 Column.prototype.addCard = function(card) {
-    const child = card.element;
     const parent = card.element.parentNode
     // card.element
     console.log(child)
     console.log(card.element)
 }
 
-Column.prototype.removeColumn = function(e) {
-    e.remove();
-}
+Column.prototype.removeColumn = e => e.remove();
 
 class Card {
   constructor (name) {
