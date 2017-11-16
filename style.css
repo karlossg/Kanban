@@ -1,3 +1,12 @@
+.column-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.column {
+  margin: 30px;
+}
+
 .card-description {
   display: inline;
 }
