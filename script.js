@@ -50,7 +50,7 @@ class Column {
 }
 
 Column.prototype.addCard = function(card) {
-    this.$element.children('ul').append(card.$element);
+    console.log(card)
 }
 
 Column.prototype.removeColumn = function(e) {
@@ -146,7 +146,7 @@ function setEventListeneres() {
 
   for (var i = 0; i < addCardButtonsArrLength; i++) {
     const element = addCardButtonsArr[i].addEventListener('click', function (e) {
-      const elementClicked = e.target;
+      // const elementClicked = e.target;
       Column.prototype.addCard(new Card(prompt("Enter the name of the card")));
     }, false);
   }
