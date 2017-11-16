@@ -50,7 +50,11 @@ class Column {
 }
 
 Column.prototype.addCard = function(card) {
-    console.log(card)
+    const child = card.element;
+    const parent = card.element.parentNode
+    // card.element
+    console.log(child)
+    console.log(card.element)
 }
 
 Column.prototype.removeColumn = function(e) {
@@ -99,7 +103,6 @@ Card.prototype.removeCard = function() {
 let board = {
   name: 'Kanban Board',
   addColumn: function(column) {
-    (console.log(column))
     this.$element.append(column.element);
     initSortable();
   },
@@ -138,17 +141,20 @@ function setEventListeneres() {
   const addCardButtonsArrLength = addCardButtonsArr.length;
 
   for (var i = 0; i < deleteButtonsArrLength; i++) {
-    const element = deleteButtonsArr[i].addEventListener('click', function (e) {
+    deleteButtonsArr[i].addEventListener('click', function (e) {
       const elementClicked = e.target;
       Column.prototype.removeColumn(elementClicked.parentNode);
-    }, false);
+    });
   }
 
   for (var i = 0; i < addCardButtonsArrLength; i++) {
-    const element = addCardButtonsArr[i].addEventListener('click', function (e) {
-      // const elementClicked = e.target;
-      Column.prototype.addCard(new Card(prompt("Enter the name of the card")));
-    }, false);
+    if (addCardButtonsArr[i].getAttribute('listener') !== 'true') {
+    addCardButtonsArr[i].addEventListener('click', function (e) {
+      const elementClicked = e.target;
+        elementClicked.setAttribute('listener', 'true')
+        Column.prototype.addCard(new Card(prompt("Enter the name of the card")));
+    });
+  }
   }
 }
 
