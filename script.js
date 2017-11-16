@@ -45,8 +45,6 @@ class Column {
     columnAddCard.className = "add-card";
     columnAddCard.textContent = "Add a card";
 
-    // columnAddCard.addEventListener onclick = () => this.addCard(new Card(prompt("Enter the name of the card")));
-    
     return columnAddCard;
   }
 }
@@ -63,19 +61,19 @@ class Card {
   constructor (name) {
     this.id = randomString();
     this.name = name;
-    this.element = createCard();
+    this.element = this.createCard();
   }
 
   createCard() {
     let card = document.createElement("li");
     card.className = "card";
-    card.appendChild(createCardDescription());
-    card.appendChild(createCardDeleteButton());
+    card.appendChild(this.createCardDescription());
+    card.appendChild(this.createCardDeleteButton());
     
     return card;
-    cardDelete.onclick = () => {
-      self.removeCard();
-    }
+    // cardDelete.onclick = () => {
+    //   self.removeCard();
+    // }
   }
   
   createCardDescription() {
@@ -134,13 +132,22 @@ function randomString() {
 
 function setEventListeneres() {
   const deleteButtonsArr = document.getElementsByClassName('btn-delete');
-  const length = deleteButtonsArr.length;
-  for (var i = 0; i < length; i++) {
-    element = deleteButtonsArr[i].addEventListener('click', function (e) {
+  const deleteButtonsArrLength = deleteButtonsArr.length;
+
+  const addCardButtonsArr = document.getElementsByClassName('add-card');
+  const addCardButtonsArrLength = addCardButtonsArr.length;
+
+  for (var i = 0; i < deleteButtonsArrLength; i++) {
+    const element = deleteButtonsArr[i].addEventListener('click', function (e) {
       const elementClicked = e.target;
-     
-        Column.prototype.removeColumn(elementClicked.parentNode);
-      
+      Column.prototype.removeColumn(elementClicked.parentNode);
+    }, false);
+  }
+
+  for (var i = 0; i < addCardButtonsArrLength; i++) {
+    const element = addCardButtonsArr[i].addEventListener('click', function (e) {
+      const elementClicked = e.target;
+      Column.prototype.addCard(new Card(prompt("Enter the name of the card")));
     }, false);
   }
 }
