@@ -116,8 +116,7 @@ function setEventListeneres() {
         const elementClicked = e.target;
         Column.prototype.addCard(new Card(prompt("Enter the name of the card")), elementClicked.parentNode.children[3]);
     } else if (e.target.matches('.create-column')) {
-        const name = prompt('Enter a column name');
-        const column = new Column(name);
+        const column = new Column(prompt('Enter a column name'));
         board.addColumn(column);
     }
   });
