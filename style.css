@@ -112,16 +112,22 @@ button {
   height: 35px;
   width: 35px;
   padding: 0;
+  margin-left: 20%;
   text-decoration: none;
+  cursor: pointer;
 }
 
 .card {
-  max-height: 20px;
+  height: 60px;
+  width: 280px;
+  background-color: #bfc4c7;
 }
 .card-description {
   display: inline-block;
   max-width: 75%;
   word-break:break-word;
+  padding-left: 5px;
+  
 }
 
 .column-card-list {
