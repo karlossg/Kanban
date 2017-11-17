@@ -108,14 +108,12 @@ function randomString() {
 }
 
 (function setEventListeneres() {
-  let column = '';
-  let card = '';
+  // let column = '';
+  // let card = '';
   const mainBoard = document.querySelector('.board');
   mainBoard.addEventListener('click', (e) => {
     if (e.target.matches('.btn-delete')) {
         const elementClicked = e.target;
-        // const element = elementClicked.parentNode.className;
-        // console.log(element)
         card.removeElement(elementClicked.parentNode);
     } else if (e.target.matches('.add-card')) {
         const elementClicked = e.target;
@@ -140,9 +138,11 @@ doingColumn.addColumn(doingColumn);
 doneColumn.addColumn(doneColumn);
 
 // CREATING CARDS
-const card1 = new Card('New task');
-const card2 = new Card('Create kanban boards');
+let card = new Card('New task');
+todoColumn.addElement(card.element, todoColumn.element.childNodes[3]);
 
+card = new Card('Create kanban boards');
+doingColumn.addElement(card.element, doingColumn.element.childNodes[3]);
 // ADDING CARDS TO COLUMNS
-todoColumn.addElement(card1.element, todoColumn.element.childNodes[3]);
-doingColumn.addElement(card2.element, doingColumn.element.childNodes[3]);
+
+
