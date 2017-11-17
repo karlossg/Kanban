@@ -4,7 +4,7 @@ class Board {
   }
   
   static addElement(child, parent=document.querySelector('#board .column-container')) {
-    parent.append(child)
+    parent.appendChild(child)
     initSortable();
   }
   
