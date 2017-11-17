@@ -106,7 +106,7 @@ function randomString() {
   return str;
 }
 
-function setEventListeneres() {
+(function setEventListeneres() {
   const mainBoard = document.querySelector('.board');
   mainBoard.addEventListener('click', (e) => {
     if (e.target.matches('.btn-delete')) {
@@ -120,9 +120,9 @@ function setEventListeneres() {
         board.addColumn(column);
     }
   });
-}
+})()
 
-setEventListeneres();
+// setEventListeneres();
 
 const todoColumn = new Column('To do');
 const doingColumn = new Column('Doing');
