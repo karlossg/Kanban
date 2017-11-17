@@ -29,8 +29,8 @@ class Column extends Board {
   createColumn() {
     let column = document.createElement("div");
     column.className = "column";
-    column.appendChild(this.createColumnTitle());
     column.appendChild(this.createDeleteButton());
+    column.appendChild(this.createColumnTitle());
     column.appendChild(this.createColumnAddCardButton());
     column.appendChild(this.createColumnCardList());
     return column;

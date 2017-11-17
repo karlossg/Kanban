@@ -1,14 +1,41 @@
+button {
+  margin: 20px;
+}
+
+
+.board {
+  /* display: inline */
+  text-align: center;
+}
+
+.board h1 {
+  display: inline;
+  margin: 20px;
+}
+
+.create-column {
+  /* float: left; */
+}
+
 .column-container {
   display: flex;
   flex-direction: row;
+  align-items: center;
 }
 
 .column {
-  margin: 30px;
+  margin: 10px;
   width: 300px;
   height: 400px;
+  border-radius: 5%;
   background-color: #e9a9a9;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  align-content: flex-start;
 }
+
+
 
 .card-description {
   display: inline;
@@ -16,4 +43,10 @@
 
 .column-card-list {
   height: 25px;
+  display: flex;
+  flex-direction: column;
+}
+.column-card-list li {
+  max-height: 20px;
+  margin: 5px;
 }
