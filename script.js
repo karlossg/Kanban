@@ -1,5 +1,3 @@
-
-
 class Column {
   constructor (name) {
     this.id = randomString();
