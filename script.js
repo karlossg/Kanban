@@ -84,7 +84,9 @@ class Card extends Board {
 function initSortable() {
   $('.column-card-list').sortable({
     connectWith: '.column-card-list',
-    placeholder: 'card-placeholder'
+    placeholder: 'card-placeholder',
+    opacity: 0.8,
+    tolerance: "intersect"
   }).disableSelection();
 }
 
