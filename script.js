@@ -109,17 +109,16 @@ function randomString() {
         card.addElement(card.element, elementClicked.parentNode.children[3]);
     } else if (e.target.matches('.create-column')) {
         const column = new Column(prompt('Enter a column name'));
-        // const element = document.querySelector('#board .column-container');
         column.addElement(column.element);
     }
   });
 })()
 
 function setup(columnName, cardName) {
-  let newColumn = new Column(columnName);
+  const newColumn = new Column(columnName);
   newColumn.addElement(newColumn.element)
   if (cardName) {
-    let card = new Card(cardName);
+    const card = new Card(cardName);
     newColumn.addElement(card.element, newColumn.element.childNodes[3]);
   }
 }
