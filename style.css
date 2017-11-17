@@ -96,7 +96,7 @@ button {
 }
 .btn-delete:hover {
   background: #424547;
-  background-image: linear-gradient(to bottom, #424547, #b9c3c9);
+  background-image: linear-gradient(to bottom, #520410, #7c061b);
   text-decoration: none;
   cursor: pointer;
 }
@@ -116,6 +116,11 @@ button {
   text-decoration: none;
   cursor: pointer;
 }
+
+.add-card:hover {
+  background: #424547;
+  background-image: linear-gradient(to bottom, #424547, #b9c3c9);
+} 
 
 .card {
   height: 60px;
