@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-class Column {
-=======
 class Board {
   constructor (name) {
     this.name = 'Kanban Board';
@@ -22,7 +19,6 @@ class Board {
 };
 
 class Column extends Board {
->>>>>>> class-for-board
   constructor (name) {
     super(name);
     this.id = randomString();
