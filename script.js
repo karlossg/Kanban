@@ -68,8 +68,8 @@ class Card extends Board {
   createCard() {
     let card = document.createElement("li");
     card.className = "card";
-    card.appendChild(this.createCardDescription());
     card.appendChild(Board.createDeleteButton());
+    card.appendChild(this.createCardDescription());
     return card;
   }
   
