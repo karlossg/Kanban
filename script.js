@@ -1,8 +1,38 @@
 var baseUrl = 'https://kodilla.com/pl/bootcamp-api';
 var myHeaders = {
-  'X-Client-Id': 'X-Client-Id',
-  'X-Auth-Token': 'X-Auth-Token'
+  'X-Client-Id': '2342',
+  'X-Auth-Token': 'df50b9650201d2c5485d36b77888b4f8'
 };
+
+$.ajaxSetup({
+	headers: myHeaders
+});
+
+$.ajax({
+  url: baseUrl + '/board',
+  method: 'GET',
+  success: function(response) {
+    setupColumns(response.columns);
+  }
+});
+
+function setupColumns(columns) {
+  columns.forEach(function (column) {
+    var col = new Column(column.id, column.name);
+      board.createColumn(col);
+      setupCards(col, column.cards);
+  });
+}
+
+function setupCards(col, cards) {
+	cards.forEach(function (card) {
+        var card = new Card(card.id, card.name, card.bootcamp_kanban_column_id);
+    	col.createCard(card);
+  	})
+}
+
+
+
 class Board {
   constructor (name) {
     this.name = 'Kanban Board';
@@ -13,7 +43,15 @@ class Board {
     initSortable();
   }
   
-  static removeElement(e) {e.remove()}
+  static removeElement(e) {
+    $.ajax({
+      url: baseUrl + e.className + self.id,
+      method: 'DELETE',
+      success: function(response){
+        e.remove();
+        }
+    });
+  }
 
   static createDeleteButton() {
     let deleteButton = document.createElement("button");
@@ -24,10 +62,10 @@ class Board {
 };
 
 class Column extends Board {
-  constructor (name) {
-    super(name);
-    this.id = randomString();
-    this.name = name;
+  constructor (name, id) {
+    super(name, id);
+    this.id = id;
+    this.name = name || 'no name';
     this.element = this.createColumn();
   }
   
@@ -95,14 +133,7 @@ function initSortable() {
   }).disableSelection();
 }
 
-function randomString() {
-  const chars = '0123456789abcdefghiklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXTZ';
-  let str = '';
-  for (let i = 0; i < 10; i++) {
-      str += chars[Math.floor(Math.random() * chars.length)];
-  }
-  return str;
-}
+
 
 (function setEventListeneres() {
   const mainBoard = document.querySelector('.board');
@@ -121,15 +152,3 @@ function randomString() {
   });
 })()
 
-function setup(columnName, cardName) {
-  const newColumn = new Column(columnName);
-  Board.addElement(newColumn.element)
-  if (cardName) {
-    const card = new Card(cardName);
-    Board.addElement(card.element, newColumn.element.childNodes[3]);
-  }
-}
-
-setup('To do', 'New task');
-setup('Doing', 'Create kanban boards');
-setup('Done');
