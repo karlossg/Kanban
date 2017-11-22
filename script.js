@@ -28,9 +28,10 @@ function setupColumns(columns) {
 }
 
 function setupCards(col, cards) {
-	cards.forEach(function (card) {
+	cards.forEach(function (card, col) {
+    console.log(col + '-' + card.bootcamp_kanban_column_id) 
         var card = new Card(card.id, card.name, card.bootcamp_kanban_column_id);
-        Board.addElement(card.element);
+        Board.addElement(card.element, );
   	})
 }
 
