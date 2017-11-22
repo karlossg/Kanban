@@ -13,21 +13,24 @@ $.ajax({
   method: 'GET',
   success: function(response) {
     setupColumns(response.columns);
+    console.log(response.columns)
   }
 });
 
 function setupColumns(columns) {
   columns.forEach(function (column) {
     var col = new Column(column.id, column.name);
-      board.createColumn(col);
-      setupCards(col, column.cards);
+    // console.log(col.element)
+    // console.log(column.cards)
+    Board.addElement(col.element);
+    setupCards(col, column.cards);
   });
 }
 
 function setupCards(col, cards) {
 	cards.forEach(function (card) {
         var card = new Card(card.id, card.name, card.bootcamp_kanban_column_id);
-    	col.createCard(card);
+        Board.addElement(card.element);
   	})
 }
 
@@ -62,8 +65,8 @@ class Board {
 };
 
 class Column extends Board {
-  constructor (name, id) {
-    super(name, id);
+  constructor (id, name) {
+    super(id, name);
     this.id = id;
     this.name = name || 'no name';
     this.element = this.createColumn();
@@ -72,6 +75,7 @@ class Column extends Board {
   createColumn() {
     let column = document.createElement("div");
     column.className = "column";
+    column.id = this.id;
     column.appendChild(Board.createDeleteButton());
     column.appendChild(this.createColumnTitle());
     column.appendChild(this.createColumnAddCardButton());
@@ -101,9 +105,9 @@ class Column extends Board {
 }
 
 class Card extends Board {
-  constructor (name) {
-    super(name);
-    this.id = randomString();
+  constructor (id, name) {
+    super(id, name);
+    this.id = id;
     this.name = name;
     this.element = this.createCard();
   }
@@ -111,6 +115,7 @@ class Card extends Board {
   createCard() {
     let card = document.createElement("li");
     card.className = "card";
+    card.id = this.id;
     card.appendChild(Board.createDeleteButton());
     card.appendChild(this.createCardDescription());
     return card;
@@ -143,12 +148,58 @@ function initSortable() {
         Board.removeElement(elementClicked.parentNode);
     } else if (e.target.matches('.add-card')) {
         const elementClicked = e.target;
-        const card = new Card(prompt("Enter the name of the card"));
-        Board.addElement(card.element, elementClicked.parentNode.children[3]);
+        const columnId = elementClicked.parentNode.id
+        const cardName = prompt("Enter the name of the card");
+        $.ajax({
+			    url: baseUrl + '/card',
+			    method: 'POST',
+			    data: {
+			    name: cardName,
+			    bootcamp_kanban_column_id: columnId
+			    },
+			    success: function(response) {
+              const card = new Card(response.id, cardName);
+              Board.addElement(card.element, elementClicked.parentNode.children[3]);
+			    }
+		  	});
     } else if (e.target.matches('.create-column')) {
-        const column = new Column(prompt('Enter a column name'));
-        Board.addElement(column.element);
+        const columnName = prompt('Enter a column name');
+        $.ajax({
+          url: baseUrl + '/column',
+          method: 'POST',
+          data: {
+                name: columnName
+          },
+          success: function(response){
+            const column = new Column(response.id, columnName);
+            Board.addElement(column.element);
+              }
+        });
     }
   });
 })()
 
+  // $.ajax({
+  //   url: baseUrl + '/column',
+  //   method: 'POST',
+  //   data: {
+  //         name: columnName
+  //   },
+  //   success: function(response){
+  //     var column = new Column(response.id, columnName);
+  //     board.createColumn(column);
+  //       }
+  //   });
+
+  //   $.ajax({
+  //     url: baseUrl + '/card',
+  //     method: 'POST',
+  //     data: {
+  //     name: cardName,
+  //     bootcamp_kanban_column_id: self.id
+  //     },
+  //     success: function(response) {
+  //         var card = new Card(response.id, cardName);
+  //         self.createCard(card);
+  //     }
+  // });
