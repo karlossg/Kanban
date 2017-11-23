@@ -12,7 +12,6 @@
     box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
   }
 
-
   .board {
     text-align: center;
   }
@@ -40,9 +39,9 @@
     border-radius: 5%;
     font-family: Arial;
     color: #fff;
-    font-size: 40px;
-    height: 45px;
-    width: 45px;
+    font-size: 30px;
+    height: 35px;
+    width: 35px;
     padding: 0;
     text-decoration: none;
   }
@@ -52,6 +51,14 @@
     background-image: linear-gradient(to bottom, #424547, #b9c3c9);
     text-decoration: none;
     cursor: pointer;
+  }
+
+  .column-name {
+    height: 35px;
+    font-size: 25px;
+    margin-bottom: 5px;
+    border: none;
+    display: none;
   }
 
   .column-container {

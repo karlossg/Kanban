@@ -156,7 +156,12 @@ function initSortable() {
 			    }
 		  	});
     } else if (e.target.matches('.create-column')) {
-        const columnName = prompt('Enter a column name');
+        const addButton = e.target;
+        addButton.style.display = 'none';
+        const input = document.getElementById('columnName');
+        input.style.display = 'inline';
+        
+        const columnName = input.value;
         $.ajax({
           url: baseUrl + '/column',
           method: 'POST',
