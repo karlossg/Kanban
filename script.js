@@ -160,19 +160,38 @@ function initSortable() {
         addButton.style.display = 'none';
         const input = document.getElementById('columnName');
         input.style.display = 'inline';
-        
-        const columnName = input.value;
-        $.ajax({
-          url: baseUrl + '/column',
-          method: 'POST',
-          data: {
-                name: columnName
-          },
-          success: function(response){
-            const column = new Column(response.id, columnName);
-            Board.addElement(column.element);
-              }
-        });
-    }
+    } else if (e.target.matches('.add-column')) {
+      const columnName = document.getElementById('columnName').value
+      $.ajax({
+        url: baseUrl + '/column',
+        method: 'POST',
+        data: {
+              name: columnName
+        },
+        success: function(response){
+          const column = new Column(response.id, columnName);
+          Board.addElement(column.element);
+            }
+      });
+      document.getElementById('columnName').value = ''; 
+      const addButton = document.getElementById('createColumn');
+      addButton.style.display = 'inline';
+      const input = document.getElementById('columnName');
+      input.style.display = 'none';
+  } else if (e.target.matches('.column-title')) {
+    const columnName = document.getElementById('columnName').value
+    $.ajax({
+      url: baseUrl + '/column',
+      method: 'POST',
+      data: {
+            name: columnName
+      },
+      success: function(response){
+        const column = new Column(response.id, columnName);
+        Board.addElement(column.element);
+          }
+    });
+    document.getElementById('columnName').value = ''; 
+}
   });
 })()
