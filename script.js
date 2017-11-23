@@ -1,5 +1,5 @@
-var baseUrl = 'https://kodilla.com/pl/bootcamp-api';
-var myHeaders = {
+const baseUrl = 'https://kodilla.com/pl/bootcamp-api';
+const myHeaders = {
   'X-Client-Id': '2342',
   'X-Auth-Token': 'df50b9650201d2c5485d36b77888b4f8'
 };
@@ -11,31 +11,24 @@ $.ajaxSetup({
 $.ajax({
   url: baseUrl + '/board',
   method: 'GET',
-  success: function(response) {
-    setupColumns(response.columns);
-    console.log(response.columns)
-  }
+  success: (response) => {setupColumns(response.columns)}
 });
 
 function setupColumns(columns) {
   columns.forEach(function (column) {
-    var col = new Column(column.id, column.name);
-    // console.log(col.element)
-    // console.log(column.cards)
+    const col = new Column(column.id, column.name);
     Board.addElement(col.element);
-    setupCards(col, column.cards);
+    setupCards(col, column.id, column.cards);
   });
 }
 
-function setupCards(col, cards) {
-	cards.forEach(function (card) {
-    console.log(col.element + '-' + card.bootcamp_kanban_column_id) 
-        var card = new Card(card.id, card.name, card.bootcamp_kanban_column_id);
-        Board.addElement(card.element, );
+function setupCards(col, columnID, cards) {
+	cards.forEach(function (card, index) {
+      const newCard = new Card(card.id, card.name, card.bootcamp_kanban_column_id);
+      const x = document.getElementById(columnID);
+      Board.addElement(newCard.element, x.childNodes[3]);
   	})
 }
-
-
 
 class Board {
   constructor (name) {
@@ -47,15 +40,7 @@ class Board {
     initSortable();
   }
   
-  static removeElement(e) {
-    $.ajax({
-      url: baseUrl + e.className + self.id,
-      method: 'DELETE',
-      success: function(response){
-        e.remove();
-        }
-    });
-  }
+  static removeElement(e) {e.remove()}
 
   static createDeleteButton() {
     let deleteButton = document.createElement("button");
@@ -146,7 +131,14 @@ function initSortable() {
   mainBoard.addEventListener('click', (e) => {
     if (e.target.matches('.btn-delete')) {
         const elementClicked = e.target;
-        Board.removeElement(elementClicked.parentNode);
+        $.ajax({
+          url: baseUrl + '/' + elementClicked.parentNode.className + '/' + elementClicked.parentNode.id,
+          method: 'DELETE',
+          success: function(response){
+            const elementToRemove = document.getElementById(response.id)
+            Board.removeElement(elementToRemove);
+            }
+        });
     } else if (e.target.matches('.add-card')) {
         const elementClicked = e.target;
         const columnId = elementClicked.parentNode.id
@@ -179,28 +171,3 @@ function initSortable() {
     }
   });
 })()
-
-  // $.ajax({
-  //   url: baseUrl + '/column',
-  //   method: 'POST',
-  //   data: {
-  //         name: columnName
-  //   },
-  //   success: function(response){
-  //     var column = new Column(response.id, columnName);
-  //     board.createColumn(column);
-  //       }
-  //   });
-
-  //   $.ajax({
-  //     url: baseUrl + '/card',
-  //     method: 'POST',
-  //     data: {
-  //     name: cardName,
-  //     bootcamp_kanban_column_id: self.id
-  //     },
-  //     success: function(response) {
-  //         var card = new Card(response.id, cardName);
-  //         self.createCard(card);
-  //     }
-  // });
