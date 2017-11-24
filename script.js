@@ -176,11 +176,11 @@ function initSortable() {
         }
       });
     } else if (e.target.matches('.add-card')) {
+      const columnId =  e.target.parentNode.id;
       const cardName = document.getElementById('addCard');
       cardName.style.visibility = "hidden";
       const cardNameInput = document.getElementById('cardNameInput');
       cardNameInput.style.visibility = "visible";
-      console.log(cardName)
       cardNameInput.focus();
       $.ajax({
         url: baseUrl + '/card',
