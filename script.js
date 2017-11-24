@@ -220,20 +220,36 @@ function initSortable() {
     if (e.target.matches('.column-title')) {
       const columnTitle = e.target;
       columnTitle.style.display = 'none';
-      const newNameInput = columnTitle.parentNode.children[4];
-      newNameInput.style.display = 'inline';
       
-      // $.ajax({
-      //   url: baseUrl + '/column',
-      //   method: 'POST',
-      //   data: {
-      //     name: columnName
-      //   },
-      //   success: function(response) {
-      //     const column = new Column(response.id, columnName);
-      //     Board.addElement(column.element);
-      //   }
-      // });
+      let columnName = columnTitle.textContent;
+      let newNameInput = columnTitle.parentNode.children[4];
+      newNameInput.style.display = 'inline';
+      newNameInput.value = columnName;
+      newNameInput.focus();
+      newNameInput.addEventListener('keyup', function (event) {
+        //check to see if the enter key was pressed
+        if (event.which === 13) {
+          //if so, run the addTask function
+          addTask();
+        }
+      });
+      newNameInput.addEventListener('focusout', function (event) {
+        columnName = newNameInput.value;
+        console.log(columnName)
+        $.ajax({
+          url: baseUrl + '/' + e.target.parentNode.className + '/' + e.target.parentNode.id,
+          method: 'PUT',
+          data: {
+            name: columnName
+          },
+          // success: function(response) {
+          //   const column = new Column(response.id, columnName);
+          //   Board.addElement(column.element);
+          // }
+        });
+        
+      });
+      
       // document.getElementById('columnName').value = '';
       // const createButton = document.getElementById('createColumn');
       // createButton.style.display = 'inline';
