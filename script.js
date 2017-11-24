@@ -182,6 +182,7 @@ function initSortable() {
       const cardNameInput = document.getElementById('cardNameInput');
       cardNameInput.style.visibility = "visible";
       cardNameInput.focus();
+      cardNameInput.addEventListener
       $.ajax({
         url: baseUrl + '/card',
         method: 'POST',
@@ -248,7 +249,7 @@ function initSortable() {
       newNameInput.value = columnName;
       newNameInput.focus();
       
-      newNameInput.addEventListener('keyup', function (event) {
+      newNameInput.addEventListener('keyup', function () {
         columnName = newNameInput.value;
         if (event.which === 13) {
           $.ajax({
@@ -267,7 +268,7 @@ function initSortable() {
           
         }
       });
-      newNameInput.addEventListener('focusout', function (event) {
+      newNameInput.addEventListener('focusout', function () {
         columnName = newNameInput.value;
         $.ajax({
           url: baseUrl + '/' + e.target.parentNode.className + '/' + e.target.parentNode.id,
