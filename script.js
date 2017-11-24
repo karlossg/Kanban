@@ -222,7 +222,7 @@ function initSortable() {
       columnTitle.style.display = 'none';
       const newNameInput = columnTitle.parentNode.children[4];
       newNameInput.style.display = 'inline';
-      console.log(newNameInput)
+      
       // $.ajax({
       //   url: baseUrl + '/column',
       //   method: 'POST',
