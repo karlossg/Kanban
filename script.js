@@ -220,43 +220,48 @@ function initSortable() {
     if (e.target.matches('.column-title')) {
       let columnTitleElement = e.target;
       columnTitleElement.style.display = 'none';
-      
       let columnName = columnTitleElement.textContent;
       const newNameInput = columnTitleElement.parentNode.children[4];
       newNameInput.style.display = 'inline';
       newNameInput.value = columnName;
       newNameInput.focus();
+      
       newNameInput.addEventListener('keyup', function (event) {
       columnName = newNameInput.value;
       console.log(columnName)
         if (event.which === 13) {
-          
           $.ajax({
             url: baseUrl + '/' + columnTitleElement.parentNode.className + '/' + columnTitleElement.parentNode.id,
             method: 'PUT',
             data: {
               name: columnName
             },
-           
+            success: function(response) {
+              const currentColumn = document.getElementById(response.id)
+              currentColumn.children[1].textContent = columnName;
+              currentColumn.children[1].style.display = 'inline'
+              newNameInput.style.display = 'none';
+            }
           });
           
         }
       });
       newNameInput.addEventListener('focusout', function (event) {
         columnName = newNameInput.value;
-        
         $.ajax({
           url: baseUrl + '/' + e.target.parentNode.className + '/' + e.target.parentNode.id,
           method: 'PUT',
           data: {
             name: columnName
           },
-         
+          success: function(response) {
+            const currentColumn = document.getElementById(response.id)
+            currentColumn.children[1].textContent = columnName;
+            currentColumn.children[1].style.display = 'inline'
+            newNameInput.style.display = 'none';
+          }
         });
-        e.target.textContent = columnTitleElement.textContent;
-        console.log(columnTitleElement.textContent)
-        columnTitleElement.style.display = 'inline';
-        newNameInput.style.display = 'none';
+        
         
       });
       // columnTitle = columnName;
