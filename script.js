@@ -5,17 +5,19 @@ const myHeaders = {
 };
 
 $.ajaxSetup({
-	headers: myHeaders
+  headers: myHeaders
 });
 
 $.ajax({
   url: baseUrl + '/board',
   method: 'GET',
-  success: (response) => {setupColumns(response.columns)}
+  success: (response) => {
+    setupColumns(response.columns)
+  }
 });
 
 function setupColumns(columns) {
-  columns.forEach(function (column) {
+  columns.forEach(function(column) {
     const col = new Column(column.id, column.name);
     Board.addElement(col.element);
     setupCards(col, column.id, column.cards);
@@ -23,24 +25,26 @@ function setupColumns(columns) {
 }
 
 function setupCards(col, columnID, cards) {
-	cards.forEach(function (card, index) {
-      const newCard = new Card(card.id, card.name, card.bootcamp_kanban_column_id);
-      const x = document.getElementById(columnID);
-      Board.addElement(newCard.element, x.childNodes[3]);
-  	})
+  cards.forEach(function(card, index) {
+    const newCard = new Card(card.id, card.name, card.bootcamp_kanban_column_id);
+    const x = document.getElementById(columnID);
+    Board.addElement(newCard.element, x.childNodes[3]);
+  })
 }
 
 class Board {
-  constructor (name) {
+  constructor(name) {
     this.name = 'Kanban Board';
   }
-  
-  static addElement(child, parent=document.querySelector('#board .column-container')) {
+
+  static addElement(child, parent = document.querySelector('#board .column-container')) {
     parent.appendChild(child)
     initSortable();
   }
-  
-  static removeElement(e) {e.remove()}
+
+  static removeElement(e) {
+    e.remove()
+  }
 
   static createDeleteButton() {
     let deleteButton = document.createElement("button");
@@ -48,31 +52,38 @@ class Board {
     deleteButton.textContent = "x";
     return deleteButton;
   }
+
+  
 };
 
 class Column extends Board {
-  constructor (id, name) {
+  constructor(id, name) {
     super(id, name);
     this.id = id;
     this.name = name || 'no name';
     this.element = this.createColumn();
   }
-  
+
   createColumn() {
     let column = document.createElement("div");
     column.className = "column";
     column.id = this.id;
+    
     column.appendChild(Board.createDeleteButton());
+    
     column.appendChild(this.createColumnTitle());
+   
     column.appendChild(this.createColumnAddCardButton());
     column.appendChild(this.createColumnCardList());
+    column.appendChild(this.createColumnChangeName());
     return column;
   }
-  
+
   createColumnTitle() {
     let columnTitle = document.createElement("h2");
     columnTitle.className = "column-title";
     columnTitle.textContent = this.name;
+    
     return columnTitle;
   }
 
@@ -81,17 +92,25 @@ class Column extends Board {
     columnCardList.className = "column-card-list";
     return columnCardList;
   }
- 
+
   createColumnAddCardButton() {
     let columnAddCard = document.createElement("button");
     columnAddCard.className = "add-card";
-    columnAddCard.textContent = "+";
+    columnAddCard.textContent = "Add new card";
     return columnAddCard;
+  }
+
+  createColumnChangeName() {
+    let newName = document.createElement("input");
+    newName.className = "column-nameChange";
+    newName.value = "test";
+    newName.style.display = "none";
+    return newName;
   }
 }
 
 class Card extends Board {
-  constructor (id, name) {
+  constructor(id, name) {
     super(id, name);
     this.id = id;
     this.name = name;
@@ -106,7 +125,7 @@ class Card extends Board {
     card.appendChild(this.createCardDescription());
     return card;
   }
-  
+
   createCardDescription() {
     let cardDescription = document.createElement("p");
     cardDescription.className = "card-description";
@@ -124,74 +143,108 @@ function initSortable() {
   }).disableSelection();
 }
 
-
-
 (function setEventListeneres() {
   const mainBoard = document.querySelector('.board');
   mainBoard.addEventListener('click', (e) => {
     if (e.target.matches('.btn-delete')) {
-        const elementClicked = e.target;
-        $.ajax({
-          url: baseUrl + '/' + elementClicked.parentNode.className + '/' + elementClicked.parentNode.id,
-          method: 'DELETE',
-          success: function(response){
-            const elementToRemove = document.getElementById(response.id)
-            Board.removeElement(elementToRemove);
-            }
-        });
+      const elementClicked = e.target;
+      $.ajax({
+        url: baseUrl + '/' + elementClicked.parentNode.className + '/' + elementClicked.parentNode.id,
+        method: 'DELETE',
+        success: function(response) {
+          const elementToRemove = document.getElementById(response.id)
+          Board.removeElement(elementToRemove);
+        }
+      });
     } else if (e.target.matches('.add-card')) {
-        const elementClicked = e.target;
-        const columnId = elementClicked.parentNode.id
-        const cardName = prompt("Enter the name of the card");
-        $.ajax({
-			    url: baseUrl + '/card',
-			    method: 'POST',
-			    data: {
-			    name: cardName,
-			    bootcamp_kanban_column_id: columnId
-			    },
-			    success: function(response) {
-              const card = new Card(response.id, cardName);
-              Board.addElement(card.element, elementClicked.parentNode.children[3]);
-			    }
-		  	});
+      const elementClicked = e.target;
+      const columnId = elementClicked.parentNode.id
+      const cardName = prompt("Enter the name of the card");
+      $.ajax({
+        url: baseUrl + '/card',
+        method: 'POST',
+        data: {
+          name: cardName,
+          bootcamp_kanban_column_id: columnId
+        },
+        success: function(response) {
+          const card = new Card(response.id, cardName);
+          Board.addElement(card.element, elementClicked.parentNode.children[3]);
+        }
+      });
     } else if (e.target.matches('.create-column')) {
-        const addButton = e.target;
-        addButton.style.display = 'none';
-        const input = document.getElementById('columnName');
-        input.style.display = 'inline';
-    } else if (e.target.matches('.add-column')) {
+      const createButton = document.getElementById('createColumn');
+      createButton.style.display = 'none';
+      const addButton = document.getElementById('createColumn_add');
+      addButton.style.display = 'inline';
+      const cancelButton = document.getElementById('createColumn_cancel');
+      cancelButton.style.display = 'inline';
+      const input = document.getElementById('columnName');
+      input.style.display = 'inline';
+    }
+
+    if (e.target.matches('.create-column_add')) {
       const columnName = document.getElementById('columnName').value
       $.ajax({
         url: baseUrl + '/column',
         method: 'POST',
         data: {
-              name: columnName
+          name: columnName
         },
-        success: function(response){
+        success: function(response) {
           const column = new Column(response.id, columnName);
           Board.addElement(column.element);
-            }
+        }
       });
-      document.getElementById('columnName').value = ''; 
-      const addButton = document.getElementById('createColumn');
-      addButton.style.display = 'inline';
+      document.getElementById('columnName').value = '';
+      const createButton = document.getElementById('createColumn');
+      createButton.style.display = 'inline';
+      const addButton = document.getElementById('createColumn_add');
+      addButton.style.display = 'none';
+      const cancelButton = document.getElementById('createColumn_cancel');
+      cancelButton.style.display = 'none';
       const input = document.getElementById('columnName');
       input.style.display = 'none';
-  } else if (e.target.matches('.column-title')) {
-    const columnName = document.getElementById('columnName').value
-    $.ajax({
-      url: baseUrl + '/column',
-      method: 'POST',
-      data: {
-            name: columnName
-      },
-      success: function(response){
-        const column = new Column(response.id, columnName);
-        Board.addElement(column.element);
-          }
-    });
-    document.getElementById('columnName').value = ''; 
-}
+    } else if (e.target.matches('.create-column_cancel')) {
+      document.getElementById('columnName').value = '';
+      const createButton = document.getElementById('createColumn');
+      createButton.style.display = 'inline';
+      const addButton = document.getElementById('createColumn_add');
+      addButton.style.display = 'none';
+      const cancelButton = document.getElementById('createColumn_cancel');
+      cancelButton.style.display = 'none';
+      const input = document.getElementById('columnName');
+      input.style.display = 'none';
+    }
+
+    if (e.target.matches('.column-title')) {
+      const columnTitle = e.target;
+      columnTitle.style.display = 'none';
+      const newNameInput = columnTitle.parentNode.children[4];
+      newNameInput.style.display = 'inline';
+      console.log(newNameInput)
+      // $.ajax({
+      //   url: baseUrl + '/column',
+      //   method: 'POST',
+      //   data: {
+      //     name: columnName
+      //   },
+      //   success: function(response) {
+      //     const column = new Column(response.id, columnName);
+      //     Board.addElement(column.element);
+      //   }
+      // });
+      // document.getElementById('columnName').value = '';
+      // const createButton = document.getElementById('createColumn');
+      // createButton.style.display = 'inline';
+      // const addButton = document.getElementById('createColumn_add');
+      // addButton.style.display = 'none';
+      // const cancelButton = document.getElementById('createColumn_cancel');
+      // cancelButton.style.display = 'none';
+      // const input = document.getElementById('columnName');
+      // input.style.display = 'none';
+    }
+  
+  
   });
 })()
