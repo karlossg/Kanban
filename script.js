@@ -218,38 +218,50 @@ function initSortable() {
     }
 
     if (e.target.matches('.column-title')) {
-      const columnTitle = e.target;
-      columnTitle.style.display = 'none';
+      let columnTitleElement = e.target;
+      columnTitleElement.style.display = 'none';
       
-      let columnName = columnTitle.textContent;
-      let newNameInput = columnTitle.parentNode.children[4];
+      let columnName = columnTitleElement.textContent;
+      const newNameInput = columnTitleElement.parentNode.children[4];
       newNameInput.style.display = 'inline';
       newNameInput.value = columnName;
       newNameInput.focus();
       newNameInput.addEventListener('keyup', function (event) {
-        //check to see if the enter key was pressed
+      columnName = newNameInput.value;
+      console.log(columnName)
         if (event.which === 13) {
-          //if so, run the addTask function
-          addTask();
+          
+          $.ajax({
+            url: baseUrl + '/' + columnTitleElement.parentNode.className + '/' + columnTitleElement.parentNode.id,
+            method: 'PUT',
+            data: {
+              name: columnName
+            },
+           
+          });
+          
         }
       });
       newNameInput.addEventListener('focusout', function (event) {
         columnName = newNameInput.value;
-        console.log(columnName)
+        
         $.ajax({
           url: baseUrl + '/' + e.target.parentNode.className + '/' + e.target.parentNode.id,
           method: 'PUT',
           data: {
             name: columnName
           },
-          // success: function(response) {
-          //   const column = new Column(response.id, columnName);
-          //   Board.addElement(column.element);
-          // }
+         
         });
+        e.target.textContent = columnTitleElement.textContent;
+        console.log(columnTitleElement.textContent)
+        columnTitleElement.style.display = 'inline';
+        newNameInput.style.display = 'none';
         
       });
-      
+      // columnTitle = columnName;
+      // columnTitle.style.display = 'inline';
+      // newNameInput.style.display = 'none';
       // document.getElementById('columnName').value = '';
       // const createButton = document.getElementById('createColumn');
       // createButton.style.display = 'inline';
