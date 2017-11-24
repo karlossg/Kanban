@@ -76,6 +76,8 @@ class Column extends Board {
     column.appendChild(this.createColumnAddCardButton());
     column.appendChild(this.createColumnCardList());
     column.appendChild(this.createColumnChangeName());
+    column.appendChild(this.createColumnAddCardName());
+    
     return column;
   }
 
@@ -97,13 +99,22 @@ class Column extends Board {
     let columnAddCard = document.createElement("button");
     columnAddCard.className = "add-card";
     columnAddCard.textContent = "Add new card";
+    columnAddCard.id = "addCard"
     return columnAddCard;
+  }
+
+  createColumnAddCardName() {
+    let cardName = document.createElement("input");
+    cardName.className = "add-cardName";
+    cardName.id = "cardNameInput";
+    cardName.style.visibility = "hidden";
+    cardName.placeholder = "Enter new card name"
+    return cardName;
   }
 
   createColumnChangeName() {
     let newName = document.createElement("input");
     newName.className = "column-nameChange";
-    newName.value = "test";
     newName.style.display = "none";
     return newName;
   }
@@ -123,6 +134,7 @@ class Card extends Board {
     card.id = this.id;
     card.appendChild(Board.createDeleteButton());
     card.appendChild(this.createCardDescription());
+    card.appendChild(this.createCardChangeName());
     return card;
   }
 
@@ -131,6 +143,13 @@ class Card extends Board {
     cardDescription.className = "card-description";
     cardDescription.textContent = this.name;
     return cardDescription;
+  }
+
+  createCardChangeName() {
+    let newName = document.createElement("input");
+    newName.className = "card-nameChange";
+    newName.style.display = "none";
+    return newName;
   }
 }
 
@@ -157,9 +176,12 @@ function initSortable() {
         }
       });
     } else if (e.target.matches('.add-card')) {
-      const elementClicked = e.target;
-      const columnId = elementClicked.parentNode.id
-      const cardName = prompt("Enter the name of the card");
+      const cardName = document.getElementById('addCard');
+      cardName.style.visibility = "hidden";
+      const cardNameInput = document.getElementById('cardNameInput');
+      cardNameInput.style.visibility = "visible";
+      console.log(cardName)
+      cardNameInput.focus();
       $.ajax({
         url: baseUrl + '/card',
         method: 'POST',
@@ -227,8 +249,7 @@ function initSortable() {
       newNameInput.focus();
       
       newNameInput.addEventListener('keyup', function (event) {
-      columnName = newNameInput.value;
-      console.log(columnName)
+        columnName = newNameInput.value;
         if (event.which === 13) {
           $.ajax({
             url: baseUrl + '/' + columnTitleElement.parentNode.className + '/' + columnTitleElement.parentNode.id,
@@ -261,23 +282,54 @@ function initSortable() {
             newNameInput.style.display = 'none';
           }
         });
-        
-        
       });
-      // columnTitle = columnName;
-      // columnTitle.style.display = 'inline';
-      // newNameInput.style.display = 'none';
-      // document.getElementById('columnName').value = '';
-      // const createButton = document.getElementById('createColumn');
-      // createButton.style.display = 'inline';
-      // const addButton = document.getElementById('createColumn_add');
-      // addButton.style.display = 'none';
-      // const cancelButton = document.getElementById('createColumn_cancel');
-      // cancelButton.style.display = 'none';
-      // const input = document.getElementById('columnName');
-      // input.style.display = 'none';
     }
-  
-  
+
+    if (e.target.matches('.card-description')) {
+      let cardDescriptionElement = e.target;
+      cardDescriptionElement.style.display = 'none';
+      let cardName = cardDescriptionElement.textContent;
+      const newNameInput = cardDescriptionElement.parentNode.children[2];
+      newNameInput.style.display = 'inline';
+      newNameInput.value = cardName;
+      newNameInput.focus();
+      
+      newNameInput.addEventListener('keyup', function (event) {
+        cardName = newNameInput.value;
+        if (event.which === 13) {
+          $.ajax({
+            url: baseUrl + '/' + cardDescriptionElement.parentNode.className + '/' + cardDescriptionElement.parentNode.id,
+            method: 'PUT',
+            data: {
+              name: cardName
+            },
+            success: function(response) {
+              const currentCard = document.getElementById(response.id)
+              currentCard.children[1].textContent = columnName;
+              currentColumn.children[1].style.display = 'inline'
+              newNameInput.style.display = 'none';
+            }
+          });
+          
+        }
+      });
+      newNameInput.addEventListener('focusout', function (event) {
+        columnName = newNameInput.value;
+        $.ajax({
+          url: baseUrl + '/' + e.target.parentNode.className + '/' + e.target.parentNode.id,
+          method: 'PUT',
+          data: {
+            name: columnName
+          },
+          success: function(response) {
+            const currentColumn = document.getElementById(response.id)
+            currentColumn.children[1].textContent = columnName;
+            currentColumn.children[1].style.display = 'inline'
+            newNameInput.style.display = 'none';
+          }
+        });
+      });
+    }
+
   });
 })()
