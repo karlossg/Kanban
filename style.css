@@ -102,12 +102,13 @@
     align-items: center;
     justify-content: center;
     flex-wrap: wrap;
+    overflow: scroll;
   }
 
   .column {
-    margin: 10px;
-    width: 300px;
-    min-height: 500px;
+    margin: 20px 10px;
+    width: 310px;
+    height: 520px;
     border-radius: 1%;
     background-color: #fff;
     box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
@@ -128,7 +129,7 @@
 
   .column-nameChange {
     position: relative;
-    bottom: 403px;
+    bottom: 525px;
     left: 42px;
     height: 30px;
     width: 80%;
@@ -180,7 +181,7 @@
     text-align: center;
     position: relative;
     font-size: 16px;
-    bottom: 365px;
+    bottom: 485px;
     height: 30px;
     width: 100%;
     border: none;
@@ -217,15 +218,17 @@
   }
 
   .column-card-list {
-    min-height: 300px;
+    height: 420px;
     width: 100%;
     padding: 2px;
     display: flex;
     flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 
   .column-card-list li {
-    min-height: 20px;
+    height: 50px;
     margin: 5px;
     text-align: left;
     list-style-type: none;

@@ -181,13 +181,14 @@ function initSortable() {
       const columnId =  e.target.parentNode.id;
       let cardName = document.getElementById('addCard').value;
       addCardButton.style.visibility = "hidden";
-      const cardNameInput = document.getElementById('cardNameInput');
+      const cardNameInput = addCardButton.parentNode.children[5];
       cardNameInput.style.visibility = "visible";
       cardNameInput.focus();
       if (!cardNameInput.hasAttribute("data-listener")) {
       cardNameInput.addEventListener('focusout', (e) => {
         cardNameInput.setAttribute("data-listener", "true");
         cardName = cardNameInput.value;
+        if (cardName.length) {
         $.ajax({
           url: baseUrl + '/card',
           method: 'POST',
@@ -204,6 +205,11 @@ function initSortable() {
             
           }
         });
+      } else {
+        addCardButton.style.visibility = "visible";
+        e.target.style.visibility = "hidden";
+        alert("Card name to short");
+      }
       })
     }
       
