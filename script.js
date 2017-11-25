@@ -176,25 +176,32 @@ function initSortable() {
         }
       });
     } else if (e.target.matches('.add-card')) {
+      const addCardButton = e.target;
       const columnId =  e.target.parentNode.id;
-      const cardName = document.getElementById('addCard');
-      cardName.style.visibility = "hidden";
+      let cardName = document.getElementById('addCard').value;
+      addCardButton.style.visibility = "hidden";
       const cardNameInput = document.getElementById('cardNameInput');
       cardNameInput.style.visibility = "visible";
       cardNameInput.focus();
-      cardNameInput.addEventListener
-      $.ajax({
-        url: baseUrl + '/card',
-        method: 'POST',
-        data: {
-          name: cardName,
-          bootcamp_kanban_column_id: columnId
-        },
-        success: function(response) {
-          const card = new Card(response.id, cardName);
-          Board.addElement(card.element, elementClicked.parentNode.children[3]);
-        }
-      });
+      cardNameInput.addEventListener('focusout', (e) => {
+        cardName = cardNameInput.value;
+        $.ajax({
+          url: baseUrl + '/card',
+          method: 'POST',
+          data: {
+            name: cardName,
+            bootcamp_kanban_column_id: columnId
+          },
+          success: function(response) {
+            const card = new Card(response.id, cardName);
+            Board.addElement(card.element, e.target.parentNode.children[3]);
+            addCardButton.style.visibility = "visible";
+            e.target.style.visibility = "hidden";
+            cardNameInput.value = '';
+          }
+        });
+      })
+      
     } else if (e.target.matches('.create-column')) {
       const createButton = document.getElementById('createColumn');
       createButton.style.display = 'none';
