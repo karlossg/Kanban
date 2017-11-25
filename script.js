@@ -162,6 +162,7 @@ function initSortable() {
   }).disableSelection();
 }
 
+
 (function setEventListeneres() {
   const mainBoard = document.querySelector('.board');
   mainBoard.addEventListener('click', (e) => {
@@ -183,7 +184,9 @@ function initSortable() {
       const cardNameInput = document.getElementById('cardNameInput');
       cardNameInput.style.visibility = "visible";
       cardNameInput.focus();
+      if (!cardNameInput.hasAttribute("data-listener")) {
       cardNameInput.addEventListener('focusout', (e) => {
+        cardNameInput.setAttribute("data-listener", "true");
         cardName = cardNameInput.value;
         $.ajax({
           url: baseUrl + '/card',
@@ -198,9 +201,11 @@ function initSortable() {
             addCardButton.style.visibility = "visible";
             e.target.style.visibility = "hidden";
             cardNameInput.value = '';
+            
           }
         });
       })
+    }
       
     } else if (e.target.matches('.create-column')) {
       const createButton = document.getElementById('createColumn');
