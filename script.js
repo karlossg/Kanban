@@ -194,7 +194,33 @@ function showHideAddColumn(Hide) {
           }
         });
         break;
+      
+      case 'card':
+        let card = document.getElementById(e.target.id);
+        
+        console.log(card.textContent)
 
+        card.addEventListener('dragend', function() {
+          console.log(e.target) 
+          // $.ajax({
+          //   url: baseUrl + '/card',
+          //   method: 'POST',
+          //   data: {
+          //     name: cardName,
+          //     bootcamp_kanban_column_id: columnId
+          //   },
+          //   success: function(response) {
+          //     const card = new Card(response.id, cardName);
+          //     Board.addElement(card.element, e.target.parentNode.children[3]);
+          //     addCardButton.style.visibility = "visible";
+          //     e.target.style.visibility = "hidden";
+          //     cardNameInput.value = '';
+          //   }
+          // });  
+        })
+        
+        break;
+      
       case 'add-card':
         const addCardButton = e.target;
         const columnId =  e.target.parentNode.id;
@@ -204,30 +230,56 @@ function showHideAddColumn(Hide) {
         cardNameInput.style.visibility = "visible";
         cardNameInput.focus();
           if (!cardNameInput.hasAttribute("data-listener")) {
-            cardNameInput.addEventListener('focusout', (e) => {
             cardNameInput.setAttribute("data-listener", "true");
-            cardName = cardNameInput.value;
-              if (cardName.length) {
-                $.ajax({
-                url: baseUrl + '/card',
-                method: 'POST',
-                data: {
-                  name: cardName,
-                  bootcamp_kanban_column_id: columnId
-                },
-                success: function(response) {
-                  const card = new Card(response.id, cardName);
-                  Board.addElement(card.element, e.target.parentNode.children[3]);
+            cardNameInput.addEventListener('focusout', (e) => {
+              cardName = cardNameInput.value;
+                if (cardName.length) {
+                  $.ajax({
+                  url: baseUrl + '/card',
+                  method: 'POST',
+                  data: {
+                    name: cardName,
+                    bootcamp_kanban_column_id: columnId
+                  },
+                  success: function(response) {
+                    const card = new Card(response.id, cardName);
+                    Board.addElement(card.element, e.target.parentNode.children[3]);
+                    addCardButton.style.visibility = "visible";
+                    e.target.style.visibility = "hidden";
+                    cardNameInput.value = '';
+                  }
+                });
+                } else {
                   addCardButton.style.visibility = "visible";
                   e.target.style.visibility = "hidden";
-                  cardNameInput.value = '';
+                  alert("Card name to short");
                 }
-              });
-              } else {
+            })
+            cardNameInput.addEventListener('keyup', (e) => {
+              
+              cardName = cardNameInput.value;
+              if (e.which === 13 && cardName.length) {
+                $.ajax({
+                  url: baseUrl + '/card',
+                  method: 'POST',
+                  data: {
+                    name: cardName,
+                    bootcamp_kanban_column_id: columnId
+                  },
+                  success: function(response) {
+                    const card = new Card(response.id, cardName);
+                    Board.addElement(card.element, e.target.parentNode.children[3]);
+                    addCardButton.style.visibility = "visible";
+                    e.target.style.visibility = "hidden";
+                    cardNameInput.value = '';
+                  }
+                });
+              } else if (!cardName.length) {
                 addCardButton.style.visibility = "visible";
                 e.target.style.visibility = "hidden";
                 alert("Card name to short");
               }
+
             })
           }
         break;
@@ -237,7 +289,6 @@ function showHideAddColumn(Hide) {
         break;
 
       case 'create-column create-column_add':
-        console.log(e.target.className)
         const columnName = document.getElementById('columnName').value
         $.ajax({
           url: baseUrl + '/column',
@@ -303,58 +354,54 @@ function showHideAddColumn(Hide) {
         });
         break;
 
-      // case 'card-description':
+      case 'card-description':
+        let cardDescriptionElement = e.target;
+        let cardDescription = cardDescriptionElement.textContent;
+        const newDescriptionInput = cardDescriptionElement.parentNode.children[2];
+        const parentColumnId =  e.target.parentNode.parentNode.parentNode.id;
+        cardDescriptionElement.style.display = 'none';
+        newDescriptionInput.style.display = 'inline';
+        newDescriptionInput.value = cardDescription;
+        newDescriptionInput.focus();
         
-
-    }
-
-    
-    if (e.target.matches('.card-description')) {
-      let cardDescriptionElement = e.target;
-      let cardName = cardDescriptionElement.textContent;
-      const newNameInput = cardDescriptionElement.parentNode.children[2];
-      cardDescriptionElement.style.display = 'none';
-      newNameInput.style.display = 'inline';
-      newNameInput.value = cardName;
-      newNameInput.focus();
-      console.log(cardName)
-      newNameInput.addEventListener('keyup', function (event) {
-        cardName = newNameInput.value;
-        
-        if (event.which === 13) {
+        newDescriptionInput.addEventListener('keyup', function (event) {
+          cardDescription = newDescriptionInput.value;
+          if (event.which === 13) {
+            $.ajax({
+              url: baseUrl + '/' +  e.target.parentNode.className + '/' +  e.target.parentNode.id,
+              method: 'PUT',
+              data: {
+                name: cardDescription,
+                bootcamp_kanban_column_id: parentColumnId
+              },
+              success: function(response) {
+                const currentCard = document.getElementById(response.id)
+                currentCard.children[1].textContent = cardDescription;
+                currentCard.children[1].style.display = 'inline'
+                newDescriptionInput.style.display = 'none';
+              }
+            });
+            
+          }
+        });
+        newDescriptionInput.addEventListener('focusout', function (event) {
+          cardDescription = newDescriptionInput.value;
           $.ajax({
             url: baseUrl + '/' +  e.target.parentNode.className + '/' +  e.target.parentNode.id,
             method: 'PUT',
             data: {
-              name: cardName
+              name: cardDescription,
+              bootcamp_kanban_column_id: parentColumnId
             },
             success: function(response) {
-              
               const currentCard = document.getElementById(response.id)
-              currentCard.children[1].textContent = columnName;
-              currentColumn.children[1].style.display = 'inline'
-              newNameInput.style.display = 'none';
+              currentCard.children[1].textContent = cardDescription;
+              currentCard.children[1].style.display = 'inline'
+              newDescriptionInput.style.display = 'none';
             }
           });
-          
-        }
-      });
-      newNameInput.addEventListener('focusout', function (event) {
-        columnName = newNameInput.value;
-        $.ajax({
-          url: baseUrl + '/' + e.target.parentNode.className + '/' + e.target.parentNode.id,
-          method: 'PUT',
-          data: {
-            name: columnName
-          },
-          success: function(response) {
-            const currentColumn = document.getElementById(response.id)
-            currentColumn.children[1].textContent = columnName;
-            currentColumn.children[1].style.display = 'inline'
-            newNameInput.style.display = 'none';
-          }
         });
-      });
+        break;
     }
 
   });
