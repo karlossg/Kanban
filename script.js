@@ -67,17 +67,13 @@ class Column extends Board {
   createColumn() {
     let column = document.createElement("div");
     column.className = "column";
-    column.id = this.id;
-    
-    column.appendChild(Board.createDeleteButton());
-    
-    column.appendChild(this.createColumnTitle());
-   
+    column.id = this.id;    
+    column.appendChild(Board.createDeleteButton());    
+    column.appendChild(this.createColumnTitle());   
     column.appendChild(this.createColumnAddCardButton());
     column.appendChild(this.createColumnCardList());
     column.appendChild(this.createColumnChangeName());
     column.appendChild(this.createColumnAddCardName());
-    
     return column;
   }
 
@@ -162,167 +158,178 @@ function initSortable() {
   }).disableSelection();
 }
 
+function showHideAddColumn(Hide) {
+  const createButton = document.getElementById('createColumn');
+  const addButton = document.getElementById('createColumn_add');
+  const cancelButton = document.getElementById('createColumn_cancel');
+  const input = document.getElementById('columnName');
+  if (Hide) {
+    createButton.style.display = 'inline';
+    addButton.style.display = 'none';
+    cancelButton.style.display = 'none';
+    input.style.display = 'none';
+  } else {
+    createButton.style.display = 'none';
+    addButton.style.display = 'inline';
+    cancelButton.style.display = 'inline';
+    input.style.display = 'inline';
+  }
+  
+}
 
 (function setEventListeneres() {
   const mainBoard = document.querySelector('.board');
   mainBoard.addEventListener('click', (e) => {
-    if (e.target.matches('.btn-delete')) {
-      const elementClicked = e.target;
-      $.ajax({
-        url: baseUrl + '/' + elementClicked.parentNode.className + '/' + elementClicked.parentNode.id,
-        method: 'DELETE',
-        success: function(response) {
-          const elementToRemove = document.getElementById(response.id)
-          Board.removeElement(elementToRemove);
-        }
-      });
-    } else if (e.target.matches('.add-card')) {
-      const addCardButton = e.target;
-      const columnId =  e.target.parentNode.id;
-      let cardName = document.getElementById('addCard').value;
-      addCardButton.style.visibility = "hidden";
-      const cardNameInput = addCardButton.parentNode.children[5];
-      cardNameInput.style.visibility = "visible";
-      cardNameInput.focus();
-      if (!cardNameInput.hasAttribute("data-listener")) {
-      cardNameInput.addEventListener('focusout', (e) => {
-        cardNameInput.setAttribute("data-listener", "true");
-        cardName = cardNameInput.value;
-        if (cardName.length) {
+    
+    switch(e.target.className) {
+      
+      case 'btn-delete':
+        const elementClicked = e.target;
         $.ajax({
-          url: baseUrl + '/card',
-          method: 'POST',
-          data: {
-            name: cardName,
-            bootcamp_kanban_column_id: columnId
-          },
+          url: baseUrl + '/' + elementClicked.parentNode.className + '/' + elementClicked.parentNode.id,
+          method: 'DELETE',
           success: function(response) {
-            const card = new Card(response.id, cardName);
-            Board.addElement(card.element, e.target.parentNode.children[3]);
-            addCardButton.style.visibility = "visible";
-            e.target.style.visibility = "hidden";
-            cardNameInput.value = '';
-            
+            const elementToRemove = document.getElementById(response.id)
+            Board.removeElement(elementToRemove);
           }
         });
-      } else {
-        addCardButton.style.visibility = "visible";
-        e.target.style.visibility = "hidden";
-        alert("Card name to short");
-      }
-      })
-    }
-      
-    } else if (e.target.matches('.create-column')) {
-      const createButton = document.getElementById('createColumn');
-      createButton.style.display = 'none';
-      const addButton = document.getElementById('createColumn_add');
-      addButton.style.display = 'inline';
-      const cancelButton = document.getElementById('createColumn_cancel');
-      cancelButton.style.display = 'inline';
-      const input = document.getElementById('columnName');
-      input.style.display = 'inline';
-    }
+        break;
 
-    if (e.target.matches('.create-column_add')) {
-      const columnName = document.getElementById('columnName').value
-      $.ajax({
-        url: baseUrl + '/column',
-        method: 'POST',
-        data: {
-          name: columnName
-        },
-        success: function(response) {
-          const column = new Column(response.id, columnName);
-          Board.addElement(column.element);
-        }
-      });
-      document.getElementById('columnName').value = '';
-      const createButton = document.getElementById('createColumn');
-      createButton.style.display = 'inline';
-      const addButton = document.getElementById('createColumn_add');
-      addButton.style.display = 'none';
-      const cancelButton = document.getElementById('createColumn_cancel');
-      cancelButton.style.display = 'none';
-      const input = document.getElementById('columnName');
-      input.style.display = 'none';
-    } else if (e.target.matches('.create-column_cancel')) {
-      document.getElementById('columnName').value = '';
-      const createButton = document.getElementById('createColumn');
-      createButton.style.display = 'inline';
-      const addButton = document.getElementById('createColumn_add');
-      addButton.style.display = 'none';
-      const cancelButton = document.getElementById('createColumn_cancel');
-      cancelButton.style.display = 'none';
-      const input = document.getElementById('columnName');
-      input.style.display = 'none';
-    }
+      case 'add-card':
+        const addCardButton = e.target;
+        const columnId =  e.target.parentNode.id;
+        const cardNameInput = addCardButton.parentNode.children[5];
+        let cardName = document.getElementById('addCard').value;
+        addCardButton.style.visibility = "hidden";
+        cardNameInput.style.visibility = "visible";
+        cardNameInput.focus();
+          if (!cardNameInput.hasAttribute("data-listener")) {
+            cardNameInput.addEventListener('focusout', (e) => {
+            cardNameInput.setAttribute("data-listener", "true");
+            cardName = cardNameInput.value;
+              if (cardName.length) {
+                $.ajax({
+                url: baseUrl + '/card',
+                method: 'POST',
+                data: {
+                  name: cardName,
+                  bootcamp_kanban_column_id: columnId
+                },
+                success: function(response) {
+                  const card = new Card(response.id, cardName);
+                  Board.addElement(card.element, e.target.parentNode.children[3]);
+                  addCardButton.style.visibility = "visible";
+                  e.target.style.visibility = "hidden";
+                  cardNameInput.value = '';
+                }
+              });
+              } else {
+                addCardButton.style.visibility = "visible";
+                e.target.style.visibility = "hidden";
+                alert("Card name to short");
+              }
+            })
+          }
+        break;
 
-    if (e.target.matches('.column-title')) {
-      let columnTitleElement = e.target;
-      columnTitleElement.style.display = 'none';
-      let columnName = columnTitleElement.textContent;
-      const newNameInput = columnTitleElement.parentNode.children[4];
-      newNameInput.style.display = 'inline';
-      newNameInput.value = columnName;
-      newNameInput.focus();
-      
-      newNameInput.addEventListener('keyup', function () {
-        columnName = newNameInput.value;
-        if (event.which === 13) {
-          $.ajax({
-            url: baseUrl + '/' + columnTitleElement.parentNode.className + '/' + columnTitleElement.parentNode.id,
-            method: 'PUT',
-            data: {
-              name: columnName
-            },
-            success: function(response) {
-              const currentColumn = document.getElementById(response.id)
-              currentColumn.children[1].textContent = columnName;
-              currentColumn.children[1].style.display = 'inline'
-              newNameInput.style.display = 'none';
-            }
-          });
-          
-        }
-      });
-      newNameInput.addEventListener('focusout', function () {
-        columnName = newNameInput.value;
+      case 'create-column':
+        showHideAddColumn();
+        break;
+
+      case 'create-column create-column_add':
+        console.log(e.target.className)
+        const columnName = document.getElementById('columnName').value
         $.ajax({
-          url: baseUrl + '/' + e.target.parentNode.className + '/' + e.target.parentNode.id,
-          method: 'PUT',
+          url: baseUrl + '/column',
+          method: 'POST',
           data: {
             name: columnName
           },
           success: function(response) {
-            const currentColumn = document.getElementById(response.id)
-            currentColumn.children[1].textContent = columnName;
-            currentColumn.children[1].style.display = 'inline'
-            newNameInput.style.display = 'none';
+            const column = new Column(response.id, columnName);
+            Board.addElement(column.element);
           }
         });
-      });
+          showHideAddColumn('hide');
+          document.getElementById('columnName').value = '';
+        break;
+      
+      case 'create-column create-column_cancel':
+        showHideAddColumn('hide');
+        document.getElementById('columnName').value = '';
+        break;
+
+      case 'column-title':
+        let columnTitleElement = e.target;
+        let columnNameToChange = columnTitleElement.textContent;
+        const newNameInput = columnTitleElement.parentNode.children[4];
+        columnTitleElement.style.display = 'none';
+        newNameInput.style.display = 'inline';
+        newNameInput.value = columnNameToChange;
+        newNameInput.focus();
+        newNameInput.addEventListener('keyup', function () {
+          columnNameToChange = newNameInput.value;
+          if (event.which === 13) {
+            $.ajax({
+              url: baseUrl + '/' + columnTitleElement.parentNode.className + '/' + columnTitleElement.parentNode.id,
+              method: 'PUT',
+              data: {
+                name: columnNameToChange
+              },
+              success: function(response) {
+                const currentColumn = document.getElementById(response.id)
+                currentColumn.children[1].textContent = columnNameToChange;
+                currentColumn.children[1].style.display = 'inline'
+                newNameInput.style.display = 'none';
+              }
+            });
+          }
+        });
+        newNameInput.addEventListener('focusout', function () {
+          columnNameToChange = newNameInput.value;
+          $.ajax({
+            url: baseUrl + '/' + e.target.parentNode.className + '/' + e.target.parentNode.id,
+            method: 'PUT',
+            data: {
+              name: columnNameToChange
+            },
+            success: function(response) {
+              const currentColumn = document.getElementById(response.id)
+              currentColumn.children[1].textContent = columnNameToChange;
+              currentColumn.children[1].style.display = 'inline'
+              newNameInput.style.display = 'none';
+            }
+          });
+        });
+        break;
+
+      // case 'card-description':
+        
+
     }
 
+    
     if (e.target.matches('.card-description')) {
       let cardDescriptionElement = e.target;
-      cardDescriptionElement.style.display = 'none';
       let cardName = cardDescriptionElement.textContent;
       const newNameInput = cardDescriptionElement.parentNode.children[2];
+      cardDescriptionElement.style.display = 'none';
       newNameInput.style.display = 'inline';
       newNameInput.value = cardName;
       newNameInput.focus();
-      
+      console.log(cardName)
       newNameInput.addEventListener('keyup', function (event) {
         cardName = newNameInput.value;
+        
         if (event.which === 13) {
           $.ajax({
-            url: baseUrl + '/' + cardDescriptionElement.parentNode.className + '/' + cardDescriptionElement.parentNode.id,
+            url: baseUrl + '/' +  e.target.parentNode.className + '/' +  e.target.parentNode.id,
             method: 'PUT',
             data: {
               name: cardName
             },
             success: function(response) {
+              
               const currentCard = document.getElementById(response.id)
               currentCard.children[1].textContent = columnName;
               currentColumn.children[1].style.display = 'inline'
