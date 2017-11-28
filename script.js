@@ -198,12 +198,12 @@ function showHideAddColumn(Hide) {
 (function setEventListeneres() {
   const mainBoard = document.querySelector('.board');
   mainBoard.addEventListener('click', (e) => {
-
-    switch (e.target.className) {
+  const elementClicked = e.target;
+    switch (elementClicked.className) {
 
       case 'btn-delete':
         $.ajax({
-          url: baseUrl + '/' + e.target.parentNode.className + '/' + e.target.parentNode.id,
+          url: baseUrl + '/' + elementClicked.parentNode.className + '/' + elementClicked.parentNode.id,
           method: 'DELETE',
           success: (response) => {
             Board.removeElement(document.getElementById(response.id));
@@ -212,11 +212,10 @@ function showHideAddColumn(Hide) {
         break;
 
       case 'add-card':
-        const addCardButton = e.target;
-        const columnId = e.target.parentNode.id;  
-        const cardNameInput = e.target.parentNode.children[5];
+        const columnId = elementClicked.parentNode.id;  
+        const cardNameInput = elementClicked.parentNode.children[5];
         let cardName = document.getElementById('addCard').value;
-        addCardButton.style.visibility = "hidden";
+        elementClicked.style.visibility = "hidden";
         cardNameInput.style.visibility = "visible";
         cardNameInput.focus();
         if (!cardNameInput.hasAttribute("data-listener")) {
@@ -234,14 +233,14 @@ function showHideAddColumn(Hide) {
                 success: (response) => {
                   const card = new Card(response.id, cardName);
                   Board.addElement(card.element, e.target.parentNode.children[3]);
-                  addCardButton.style.visibility = "visible";
+                  elementClicked.style.visibility = "visible";
                   event.target.style.visibility = "hidden";
                   cardNameInput.value = '';
                 }
               });
             } else if (!cardName.length) {
               addCardButton.style.visibility = "visible";
-              e.target.style.visibility = "hidden";
+              elementClicked.style.visibility = "hidden";
               alert("Card name to short");
             }
           })
@@ -249,7 +248,7 @@ function showHideAddColumn(Hide) {
         break;
 
       case 'create-column':
-        const columnNameInput = document.getElementById('columnName')
+        let columnNameInput = document.getElementById('columnName')
         columnNameInput.focus();
         showHideAddColumn();
         if (!columnNameInput.hasAttribute("data-listener")) {
@@ -269,7 +268,7 @@ function showHideAddColumn(Hide) {
                 }
               });
               showHideAddColumn('hide');
-              document.getElementById('columnName').value = '';
+              columnNameInput.value = '';
             }
         
         })
@@ -279,7 +278,7 @@ function showHideAddColumn(Hide) {
 
         
       case 'create-column create-column_add':
-        const columnName = document.getElementById('columnName').value
+        let columnName = document.getElementById('columnName').value
         $.ajax({
           url: baseUrl + '/column',
           method: 'POST',
@@ -302,10 +301,9 @@ function showHideAddColumn(Hide) {
       
 
       case 'column-title':
-        let columnTitleElement = e.target;
-        let columnNameToChange = columnTitleElement.textContent;
-        const newNameInput = columnTitleElement.parentNode.children[4];
-        columnTitleElement.style.display = 'none';
+        let columnNameToChange = elementClicked.textContent;
+        const newNameInput = elementClicked.parentNode.children[4];
+        elementClicked.style.display = 'none';
         newNameInput.style.display = 'inline';
         newNameInput.value = columnNameToChange;
         newNameInput.focus();
@@ -313,7 +311,7 @@ function showHideAddColumn(Hide) {
           columnNameToChange = newNameInput.value;
           if (event.which === 13) {
             $.ajax({
-              url: baseUrl + '/' + columnTitleElement.parentNode.className + '/' + columnTitleElement.parentNode.id,
+              url: baseUrl + '/' + elementClicked.parentNode.className + '/' + elementClicked.parentNode.id,
               method: 'PUT',
               data: {
                 name: columnNameToChange
@@ -327,7 +325,7 @@ function showHideAddColumn(Hide) {
             });
           }
         });
-        newNameInput.addEventListener('focusout', () => {
+        newNameInput.addEventListener('focusout', (e) => {
           columnNameToChange = newNameInput.value;
           $.ajax({
             url: baseUrl + '/' + e.target.parentNode.className + '/' + e.target.parentNode.id,
@@ -346,11 +344,10 @@ function showHideAddColumn(Hide) {
         break;
 
       case 'card-description':
-        let cardDescriptionElement = e.target;
-        let cardDescription = cardDescriptionElement.textContent;
-        const newDescriptionInput = cardDescriptionElement.parentNode.children[2];
+        let cardDescription = elementClicked.textContent;
+        const newDescriptionInput = elementClicked.parentNode.children[2];
         const parentColumnId = e.target.parentNode.parentNode.parentNode.id;
-        cardDescriptionElement.style.display = 'none';
+        elementClicked.style.display = 'none';
         newDescriptionInput.style.display = 'inline';
         newDescriptionInput.value = cardDescription;
         newDescriptionInput.focus();
@@ -359,7 +356,7 @@ function showHideAddColumn(Hide) {
           cardDescription = newDescriptionInput.value;
           if (event.which === 13) {
             $.ajax({
-              url: baseUrl + '/' + e.target.parentNode.className + '/' + e.target.parentNode.id,
+              url: baseUrl + '/' + elementClicked.parentNode.className + '/' + elementClicked.parentNode.id,
               method: 'PUT',
               data: {
                 name: cardDescription,
@@ -377,7 +374,7 @@ function showHideAddColumn(Hide) {
         newDescriptionInput.addEventListener('focusout', (event) => {
           cardDescription = newDescriptionInput.value;
           $.ajax({
-            url: baseUrl + '/' + e.target.parentNode.className + '/' + e.target.parentNode.id,
+            url: baseUrl + '/' + elementClicked.parentNode.className + '/' + elementClicked.parentNode.id,
             method: 'PUT',
             data: {
               name: cardDescription,
