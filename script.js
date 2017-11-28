@@ -202,13 +202,11 @@ function showHideAddColumn(Hide) {
     switch (e.target.className) {
 
       case 'btn-delete':
-        const elementClicked = e.target;
         $.ajax({
-          url: baseUrl + '/' + elementClicked.parentNode.className + '/' + elementClicked.parentNode.id,
+          url: baseUrl + '/' + e.target.parentNode.className + '/' + e.target.parentNode.id,
           method: 'DELETE',
           success: function(response) {
-            const elementToRemove = document.getElementById(response.id)
-            Board.removeElement(elementToRemove);
+            Board.removeElement(document.getElementById(response.id));
           }
         });
         break;
@@ -216,7 +214,7 @@ function showHideAddColumn(Hide) {
       case 'add-card':
         const addCardButton = e.target;
         const columnId = e.target.parentNode.id;  
-        const cardNameInput = addCardButton.parentNode.children[5];
+        const cardNameInput = e.target.parentNode.children[5];
         let cardName = document.getElementById('addCard').value;
         addCardButton.style.visibility = "hidden";
         cardNameInput.style.visibility = "visible";
