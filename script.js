@@ -258,25 +258,29 @@ function showHideAddColumn(Hide) {
         const columnNameInput = document.getElementById('columnName')
         columnNameInput.focus();
         showHideAddColumn();
-        columnNameInput.addEventListener('keyup', function(event) {
-          if (event.which === 13) {
-          const newColumnName = columnNameInput.value;
-          $.ajax({
-            url: baseUrl + '/column',
-            method: 'POST',
-            data: {
-              name: newColumnName
-            },
-            success: function(response) {
-              console.log(response)
-              const column = new Column(response.id, newColumnName);
-              Board.addElement(column.element);
+        if (!columnNameInput.hasAttribute("data-listener")) {
+          columnNameInput.setAttribute("data-listener", "true");
+          columnNameInput.addEventListener('keyup', function(event) {
+            if (event.which === 13) {
+            const newColumnName = columnNameInput.value;
+              $.ajax({
+                url: baseUrl + '/column',
+                method: 'POST',
+                data: {
+                  name: newColumnName
+                },
+                success: function(response) {
+                  const column = new Column(response.id, newColumnName);
+                  Board.addElement(column.element);
+                }
+              });
+              showHideAddColumn('hide');
+              document.getElementById('columnName').value = '';
             }
-          });
-          showHideAddColumn('hide');
-          document.getElementById('columnName').value = '';
-          }
+        
         })
+      }
+        columnNameInput.focus();
         break;
 
         
