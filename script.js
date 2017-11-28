@@ -165,7 +165,7 @@ function initSortable() {
           name: moveCardName,
           bootcamp_kanban_column_id: targetColumnId
         },
-        success: function(response) {
+        success: (response) => {
           $.ajax({
             url: baseUrl + '/card' + '/' + moveCardId,
             method: 'DELETE'
@@ -205,7 +205,7 @@ function showHideAddColumn(Hide) {
         $.ajax({
           url: baseUrl + '/' + e.target.parentNode.className + '/' + e.target.parentNode.id,
           method: 'DELETE',
-          success: function(response) {
+          success: (response) => {
             Board.removeElement(document.getElementById(response.id));
           }
         });
@@ -221,9 +221,9 @@ function showHideAddColumn(Hide) {
         cardNameInput.focus();
         if (!cardNameInput.hasAttribute("data-listener")) {
           cardNameInput.setAttribute("data-listener", "true");
-          cardNameInput.addEventListener('keyup', (e) => {
+          cardNameInput.addEventListener('keyup', (event) => {
             cardName = cardNameInput.value;
-            if (e.which === 13 && cardName.length) {
+            if (event.which === 13 && cardName.length) {
               $.ajax({
                 url: baseUrl + '/card',
                 method: 'POST',
@@ -231,11 +231,11 @@ function showHideAddColumn(Hide) {
                   name: cardName,
                   bootcamp_kanban_column_id: columnId
                 },
-                success: function(response) {
+                success: (response) => {
                   const card = new Card(response.id, cardName);
                   Board.addElement(card.element, e.target.parentNode.children[3]);
                   addCardButton.style.visibility = "visible";
-                  e.target.style.visibility = "hidden";
+                  event.target.style.visibility = "hidden";
                   cardNameInput.value = '';
                 }
               });
@@ -254,7 +254,7 @@ function showHideAddColumn(Hide) {
         showHideAddColumn();
         if (!columnNameInput.hasAttribute("data-listener")) {
           columnNameInput.setAttribute("data-listener", "true");
-          columnNameInput.addEventListener('keyup', function(event) {
+          columnNameInput.addEventListener('keyup', (event) => {
             if (event.which === 13) {
             const newColumnName = columnNameInput.value;
               $.ajax({
@@ -263,7 +263,7 @@ function showHideAddColumn(Hide) {
                 data: {
                   name: newColumnName
                 },
-                success: function(response) {
+                success: (response) => {
                   const column = new Column(response.id, newColumnName);
                   Board.addElement(column.element);
                 }
@@ -286,7 +286,7 @@ function showHideAddColumn(Hide) {
           data: {
             name: columnName
           },
-          success: function(response) {
+          success: (response) => {
             const column = new Column(response.id, columnName);
             Board.addElement(column.element);
           }
@@ -309,7 +309,7 @@ function showHideAddColumn(Hide) {
         newNameInput.style.display = 'inline';
         newNameInput.value = columnNameToChange;
         newNameInput.focus();
-        newNameInput.addEventListener('keyup', function() {
+        newNameInput.addEventListener('keyup', (event) => {
           columnNameToChange = newNameInput.value;
           if (event.which === 13) {
             $.ajax({
@@ -318,7 +318,7 @@ function showHideAddColumn(Hide) {
               data: {
                 name: columnNameToChange
               },
-              success: function(response) {
+              success: (response) => {
                 const currentColumn = document.getElementById(response.id)
                 currentColumn.children[1].textContent = columnNameToChange;
                 currentColumn.children[1].style.display = 'inline'
@@ -327,7 +327,7 @@ function showHideAddColumn(Hide) {
             });
           }
         });
-        newNameInput.addEventListener('focusout', function() {
+        newNameInput.addEventListener('focusout', () => {
           columnNameToChange = newNameInput.value;
           $.ajax({
             url: baseUrl + '/' + e.target.parentNode.className + '/' + e.target.parentNode.id,
@@ -335,7 +335,7 @@ function showHideAddColumn(Hide) {
             data: {
               name: columnNameToChange
             },
-            success: function(response) {
+            success: (response) => {
               const currentColumn = document.getElementById(response.id)
               currentColumn.children[1].textContent = columnNameToChange;
               currentColumn.children[1].style.display = 'inline'
@@ -355,7 +355,7 @@ function showHideAddColumn(Hide) {
         newDescriptionInput.value = cardDescription;
         newDescriptionInput.focus();
 
-        newDescriptionInput.addEventListener('keyup', function(event) {
+        newDescriptionInput.addEventListener('keyup', (event) => {
           cardDescription = newDescriptionInput.value;
           if (event.which === 13) {
             $.ajax({
@@ -365,7 +365,7 @@ function showHideAddColumn(Hide) {
                 name: cardDescription,
                 bootcamp_kanban_column_id: parentColumnId
               },
-              success: function(response) {
+              success: (response) => {
                 const currentCard = document.getElementById(response.id)
                 currentCard.children[1].textContent = cardDescription;
                 currentCard.children[1].style.display = 'inline'
@@ -374,7 +374,7 @@ function showHideAddColumn(Hide) {
             });
           }
         });
-        newDescriptionInput.addEventListener('focusout', function(event) {
+        newDescriptionInput.addEventListener('focusout', (event) => {
           cardDescription = newDescriptionInput.value;
           $.ajax({
             url: baseUrl + '/' + e.target.parentNode.className + '/' + e.target.parentNode.id,
@@ -383,7 +383,7 @@ function showHideAddColumn(Hide) {
               name: cardDescription,
               bootcamp_kanban_column_id: parentColumnId
             },
-            success: function(response) {
+            success: (response) => {
               const currentCard = document.getElementById(response.id)
               currentCard.children[1].textContent = cardDescription;
               currentCard.children[1].style.display = 'inline'
