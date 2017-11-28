@@ -240,7 +240,8 @@ class Card extends Board {
       url: baseUrl + '/card' + '/' + event.target.parentNode.id,
       method: 'PUT',
       data: {
-        name: event.target.value
+        name: event.target.value,
+        bootcamp_kanban_column_id: event.target.parentNode.parentNode.parentNode.id
       },
       success: (response) => {
         const currentCard = document.getElementById(response.id)
@@ -296,16 +297,13 @@ function showHideAddColumn(Hide) {
     cancelButton.style.display = 'inline';
     input.style.display = 'inline';
   }
-
 }
 
-(function setEventListeneres() {
+(function addEventListeneresForColumnAdding() {
   const mainBoard = document.querySelector('.board');
   mainBoard.addEventListener('click', (e) => {
   const elementClicked = e.target;
     switch (elementClicked.className) {
-
- 
 
       case 'create-column':
         let columnNameInput = document.getElementById('columnName')
@@ -330,12 +328,10 @@ function showHideAddColumn(Hide) {
               showHideAddColumn('hide');
               columnNameInput.value = '';
             }
-        
-        })
-      }
+          })
+        }
         columnNameInput.focus();
         break;
-
         
       case 'create-column create-column_add':
         let columnName = document.getElementById('columnName').value
@@ -358,51 +354,6 @@ function showHideAddColumn(Hide) {
         showHideAddColumn('hide');
         document.getElementById('columnName').value = '';
         break;
-      
-
-        //  case 'card-description':
-        // let cardDescription = elementClicked.textContent;
-        // const newDescriptionInput = elementClicked.parentNode.children[2];
-        // const parentColumnId = e.target.parentNode.parentNode.parentNode.id;
-        
-
-        // newDescriptionInput.addEventListener('keyup', (event) => {
-        //   cardDescription = newDescriptionInput.value;
-        //   if (event.which === 13) {
-        //     $.ajax({
-        //       url: baseUrl + '/' + elementClicked.parentNode.className + '/' + elementClicked.parentNode.id,
-        //       method: 'PUT',
-        //       data: {
-        //         name: cardDescription,
-        //         bootcamp_kanban_column_id: parentColumnId
-        //       },
-        //       success: (response) => {
-        //         const currentCard = document.getElementById(response.id)
-        //         currentCard.children[1].textContent = cardDescription;
-        //         currentCard.children[1].style.display = 'inline'
-        //         newDescriptionInput.style.display = 'none';
-        //       }
-        //     });
-        //   }
-        // });
-        // newDescriptionInput.addEventListener('focusout', (event) => {
-        //   cardDescription = newDescriptionInput.value;
-        //   $.ajax({
-        //     url: baseUrl + '/' + elementClicked.parentNode.className + '/' + elementClicked.parentNode.id,
-        //     method: 'PUT',
-        //     data: {
-        //       name: cardDescription,
-        //       bootcamp_kanban_column_id: parentColumnId
-        //     },
-        //     success: (response) => {
-        //       const currentCard = document.getElementById(response.id)
-        //       currentCard.children[1].textContent = cardDescription;
-        //       currentCard.children[1].style.display = 'inline'
-        //       newDescriptionInput.style.display = 'none';
-        //     }
-        //   });
-        // });
-        // break;
     }
   });
 })()
