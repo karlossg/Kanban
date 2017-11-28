@@ -88,9 +88,7 @@ class Column extends Board {
     let columnTitle = document.createElement("h2");
     columnTitle.className = "column-title";
     columnTitle.textContent = this.name;
-    columnTitle.addEventListener('keyup', (event) => {
-      let columnNameToChange = event.target.textContent;
-      const newNameInput = elementClicked.parentNode.children[4];
+    columnTitle.addEventListener('click', (event) => {
       elementClicked.style.display = 'none';
       newNameInput.style.display = 'inline';
       newNameInput.value = columnNameToChange;
