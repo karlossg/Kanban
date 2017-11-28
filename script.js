@@ -50,10 +50,17 @@ class Board {
     let deleteButton = document.createElement("button");
     deleteButton.className = "btn-delete";
     deleteButton.textContent = "x";
-    return deleteButton;
+    deleteButton.addEventListener('click', (event) => {
+      $.ajax({
+        url: baseUrl + '/' + event.target.parentNode.className + '/' + event.target.parentNode.id,
+        method: 'DELETE',
+        success: (response) => {
+          Board.removeElement(document.getElementById(response.id));
+        }
+      });
+    })
+  return deleteButton;
   }
-
-
 };
 
 class Column extends Board {
@@ -95,6 +102,10 @@ class Column extends Board {
     columnAddCard.className = "add-card";
     columnAddCard.textContent = "Add new card";
     columnAddCard.id = "addCard"
+    columnAddCard.addEventListener('click', (event) => {
+      event.target.style.visibility = "hidden";
+      event.target.parentNode.children[5].style.visibility = "visible";
+    })
     return columnAddCard;
   }
 
@@ -104,6 +115,30 @@ class Column extends Board {
     cardName.id = "cardNameInput";
     cardName.style.visibility = "hidden";
     cardName.placeholder = "Card name + (Enter)"
+    cardName.addEventListener('keyup', (event) => {
+      
+      if (event.which === 13 && cardName.length) {
+        $.ajax({
+          url: baseUrl + '/card',
+          method: 'POST',
+          data: {
+            name: cardName,
+            bootcamp_kanban_column_id: columnId
+          },
+          success: (response) => {
+            const card = new Card(response.id, cardName);
+            Board.addElement(card.element, e.target.parentNode.children[3]);
+            elementClicked.style.visibility = "visible";
+            event.target.style.visibility = "hidden";
+            cardNameInput.value = '';
+          }
+        });
+      } else if (!cardName.length) {
+        addCardButton.style.visibility = "visible";
+        elementClicked.style.visibility = "hidden";
+        alert("Card name to short");
+      }
+    })
     return cardName;
   }
 
@@ -201,22 +236,12 @@ function showHideAddColumn(Hide) {
   const elementClicked = e.target;
     switch (elementClicked.className) {
 
-      case 'btn-delete':
-        $.ajax({
-          url: baseUrl + '/' + elementClicked.parentNode.className + '/' + elementClicked.parentNode.id,
-          method: 'DELETE',
-          success: (response) => {
-            Board.removeElement(document.getElementById(response.id));
-          }
-        });
-        break;
-
+ 
       case 'add-card':
         const columnId = elementClicked.parentNode.id;  
         const cardNameInput = elementClicked.parentNode.children[5];
         let cardName = document.getElementById('addCard').value;
-        elementClicked.style.visibility = "hidden";
-        cardNameInput.style.visibility = "visible";
+      
         cardNameInput.focus();
         if (!cardNameInput.hasAttribute("data-listener")) {
           cardNameInput.setAttribute("data-listener", "true");
