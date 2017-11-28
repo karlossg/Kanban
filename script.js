@@ -168,11 +168,7 @@ function initSortable() {
         success: function(response) {
           $.ajax({
             url: baseUrl + '/card' + '/' + moveCardId,
-            method: 'DELETE',
-            success: function(response) {
-              const elementToRemove = document.getElementById(moveCardId)
-              Board.removeElement(elementToRemove);
-            }
+            method: 'DELETE'
           });
         }
       });
