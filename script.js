@@ -88,6 +88,46 @@ class Column extends Board {
     let columnTitle = document.createElement("h2");
     columnTitle.className = "column-title";
     columnTitle.textContent = this.name;
+    columnTitle.addEventListener('keyup', (event) => {
+      let columnNameToChange = event.target.textContent;
+      const newNameInput = elementClicked.parentNode.children[4];
+      elementClicked.style.display = 'none';
+      newNameInput.style.display = 'inline';
+      newNameInput.value = columnNameToChange;
+      newNameInput.focus();
+      columnNameToChange = newNameInput.value;
+      if (event.which === 13) {
+        $.ajax({
+          url: baseUrl + '/' + elementClicked.parentNode.className + '/' + elementClicked.parentNode.id,
+          method: 'PUT',
+          data: {
+            name: columnNameToChange
+          },
+          success: (response) => {
+            const currentColumn = document.getElementById(response.id)
+            currentColumn.children[1].textContent = columnNameToChange;
+            currentColumn.children[1].style.display = 'inline'
+            newNameInput.style.display = 'none';
+          }
+        });
+      }
+    });
+    newNameInput.addEventListener('focusout', (e) => {
+      columnNameToChange = newNameInput.value;
+      $.ajax({
+        url: baseUrl + '/' + e.target.parentNode.className + '/' + e.target.parentNode.id,
+        method: 'PUT',
+        data: {
+          name: columnNameToChange
+        },
+        success: (response) => {
+          const currentColumn = document.getElementById(response.id)
+          currentColumn.children[1].textContent = columnNameToChange;
+          currentColumn.children[1].style.display = 'inline'
+          newNameInput.style.display = 'none';
+        }
+      });
+    });
     return columnTitle;
   }
 
@@ -302,48 +342,48 @@ function showHideAddColumn(Hide) {
         break;
       
 
-      case 'column-title':
-        let columnNameToChange = elementClicked.textContent;
-        const newNameInput = elementClicked.parentNode.children[4];
-        elementClicked.style.display = 'none';
-        newNameInput.style.display = 'inline';
-        newNameInput.value = columnNameToChange;
-        newNameInput.focus();
-        newNameInput.addEventListener('keyup', (event) => {
-          columnNameToChange = newNameInput.value;
-          if (event.which === 13) {
-            $.ajax({
-              url: baseUrl + '/' + elementClicked.parentNode.className + '/' + elementClicked.parentNode.id,
-              method: 'PUT',
-              data: {
-                name: columnNameToChange
-              },
-              success: (response) => {
-                const currentColumn = document.getElementById(response.id)
-                currentColumn.children[1].textContent = columnNameToChange;
-                currentColumn.children[1].style.display = 'inline'
-                newNameInput.style.display = 'none';
-              }
-            });
-          }
-        });
-        newNameInput.addEventListener('focusout', (e) => {
-          columnNameToChange = newNameInput.value;
-          $.ajax({
-            url: baseUrl + '/' + e.target.parentNode.className + '/' + e.target.parentNode.id,
-            method: 'PUT',
-            data: {
-              name: columnNameToChange
-            },
-            success: (response) => {
-              const currentColumn = document.getElementById(response.id)
-              currentColumn.children[1].textContent = columnNameToChange;
-              currentColumn.children[1].style.display = 'inline'
-              newNameInput.style.display = 'none';
-            }
-          });
-        });
-        break;
+      // case 'column-title':
+      //   let columnNameToChange = elementClicked.textContent;
+      //   const newNameInput = elementClicked.parentNode.children[4];
+      //   elementClicked.style.display = 'none';
+      //   newNameInput.style.display = 'inline';
+      //   newNameInput.value = columnNameToChange;
+      //   newNameInput.focus();
+      //   newNameInput.addEventListener('keyup', (event) => {
+      //     columnNameToChange = newNameInput.value;
+      //     if (event.which === 13) {
+      //       $.ajax({
+      //         url: baseUrl + '/' + elementClicked.parentNode.className + '/' + elementClicked.parentNode.id,
+      //         method: 'PUT',
+      //         data: {
+      //           name: columnNameToChange
+      //         },
+      //         success: (response) => {
+      //           const currentColumn = document.getElementById(response.id)
+      //           currentColumn.children[1].textContent = columnNameToChange;
+      //           currentColumn.children[1].style.display = 'inline'
+      //           newNameInput.style.display = 'none';
+      //         }
+      //       });
+      //     }
+      //   });
+      //   newNameInput.addEventListener('focusout', (e) => {
+      //     columnNameToChange = newNameInput.value;
+      //     $.ajax({
+      //       url: baseUrl + '/' + e.target.parentNode.className + '/' + e.target.parentNode.id,
+      //       method: 'PUT',
+      //       data: {
+      //         name: columnNameToChange
+      //       },
+      //       success: (response) => {
+      //         const currentColumn = document.getElementById(response.id)
+      //         currentColumn.children[1].textContent = columnNameToChange;
+      //         currentColumn.children[1].style.display = 'inline'
+      //         newNameInput.style.display = 'none';
+      //       }
+      //     });
+      //   });
+      //   break;
 
       case 'card-description':
         let cardDescription = elementClicked.textContent;
