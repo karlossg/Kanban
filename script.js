@@ -115,30 +115,33 @@ class Column extends Board {
     cardName.id = "cardNameInput";
     cardName.style.visibility = "hidden";
     cardName.placeholder = "Card name + (Enter)"
-    cardName.addEventListener('keyup', (event) => {
+    cardName.type = "text";
+    cardName.size = "20";
+    cardName.maxLength = "23";
+    // cardName.addEventListener('keyup', (event) => {
       
-      if (event.which === 13 && cardName.length) {
-        $.ajax({
-          url: baseUrl + '/card',
-          method: 'POST',
-          data: {
-            name: cardName,
-            bootcamp_kanban_column_id: columnId
-          },
-          success: (response) => {
-            const card = new Card(response.id, cardName);
-            Board.addElement(card.element, e.target.parentNode.children[3]);
-            elementClicked.style.visibility = "visible";
-            event.target.style.visibility = "hidden";
-            cardNameInput.value = '';
-          }
-        });
-      } else if (!cardName.length) {
-        addCardButton.style.visibility = "visible";
-        elementClicked.style.visibility = "hidden";
-        alert("Card name to short");
-      }
-    })
+    //   if (event.which === 13 && cardName.length) {
+    //     $.ajax({
+    //       url: baseUrl + '/card',
+    //       method: 'POST',
+    //       data: {
+    //         name: cardName,
+    //         bootcamp_kanban_column_id: columnId
+    //       },
+    //       success: (response) => {
+    //         const card = new Card(response.id, cardName);
+    //         Board.addElement(card.element, e.target.parentNode.children[3]);
+    //         elementClicked.style.visibility = "visible";
+    //         event.target.style.visibility = "hidden";
+    //         cardNameInput.value = '';
+    //       }
+    //     });
+    //   } else if (!cardName.length) {
+    //     addCardButton.style.visibility = "visible";
+    //     elementClicked.style.visibility = "hidden";
+    //     alert("Card name to short");
+    //   }
+    // })
     return cardName;
   }
 
@@ -146,6 +149,9 @@ class Column extends Board {
     let newName = document.createElement("input");
     newName.className = "column-nameChange";
     newName.style.display = "none";
+    newName.type = "text";
+    newName.size = "20";
+    newName.maxLength = "15";
     return newName;
   }
 }
