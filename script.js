@@ -53,7 +53,7 @@ class Board {
     return deleteButton;
   }
 
-  
+
 };
 
 class Column extends Board {
@@ -67,9 +67,9 @@ class Column extends Board {
   createColumn() {
     let column = document.createElement("div");
     column.className = "column";
-    column.id = this.id;    
-    column.appendChild(Board.createDeleteButton());    
-    column.appendChild(this.createColumnTitle());   
+    column.id = this.id;
+    column.appendChild(Board.createDeleteButton());
+    column.appendChild(this.createColumnTitle());
     column.appendChild(this.createColumnAddCardButton());
     column.appendChild(this.createColumnCardList());
     column.appendChild(this.createColumnChangeName());
@@ -81,7 +81,6 @@ class Column extends Board {
     let columnTitle = document.createElement("h2");
     columnTitle.className = "column-title";
     columnTitle.textContent = this.name;
-    
     return columnTitle;
   }
 
@@ -104,7 +103,7 @@ class Column extends Board {
     cardName.className = "add-cardName";
     cardName.id = "cardNameInput";
     cardName.style.visibility = "hidden";
-    cardName.placeholder = "Enter new card name"
+    cardName.placeholder = "Card name + (Enter)"
     return cardName;
   }
 
@@ -154,9 +153,33 @@ function initSortable() {
     connectWith: '.column-card-list',
     placeholder: 'card-placeholder',
     opacity: 0.8,
-    tolerance: "intersect"
-  }).disableSelection();
-}
+    tolerance: "intersect",
+    stop: function( event, ui ) {
+      const moveCardId = ui.item[0].id
+      const moveCardName = ui.item[0].children[1].textContent;
+      const targetColumnId = ui.item[0].parentNode.parentNode.id;
+      console.log(moveCardId)
+      $.ajax({
+        url: baseUrl + '/card',
+        method: 'POST',
+        data: {
+          name: moveCardName,
+          bootcamp_kanban_column_id: targetColumnId
+        },
+        success: function(response) {
+          $.ajax({
+            url: baseUrl + '/card' + '/' + moveCardId,
+            method: 'DELETE',
+            success: function(response) {
+              const elementToRemove = document.getElementById(moveCardId)
+              Board.removeElement(elementToRemove);
+            }
+          });
+        }
+      });
+    }
+  }).disableSelection()};
+
 
 function showHideAddColumn(Hide) {
   const createButton = document.getElementById('createColumn');
@@ -174,15 +197,15 @@ function showHideAddColumn(Hide) {
     cancelButton.style.display = 'inline';
     input.style.display = 'inline';
   }
-  
+
 }
 
 (function setEventListeneres() {
   const mainBoard = document.querySelector('.board');
   mainBoard.addEventListener('click', (e) => {
-    
-    switch(e.target.className) {
-      
+
+    switch (e.target.className) {
+
       case 'btn-delete':
         const elementClicked = e.target;
         $.ajax({
@@ -194,100 +217,70 @@ function showHideAddColumn(Hide) {
           }
         });
         break;
-      
-      case 'card':
-        let card = document.getElementById(e.target.id);
-        
-        console.log(card.textContent)
 
-        card.addEventListener('dragend', function() {
-          console.log(e.target) 
-          // $.ajax({
-          //   url: baseUrl + '/card',
-          //   method: 'POST',
-          //   data: {
-          //     name: cardName,
-          //     bootcamp_kanban_column_id: columnId
-          //   },
-          //   success: function(response) {
-          //     const card = new Card(response.id, cardName);
-          //     Board.addElement(card.element, e.target.parentNode.children[3]);
-          //     addCardButton.style.visibility = "visible";
-          //     e.target.style.visibility = "hidden";
-          //     cardNameInput.value = '';
-          //   }
-          // });  
-        })
-        
-        break;
-      
       case 'add-card':
         const addCardButton = e.target;
-        const columnId =  e.target.parentNode.id;
+        const columnId = e.target.parentNode.id;  
         const cardNameInput = addCardButton.parentNode.children[5];
         let cardName = document.getElementById('addCard').value;
         addCardButton.style.visibility = "hidden";
         cardNameInput.style.visibility = "visible";
         cardNameInput.focus();
-          if (!cardNameInput.hasAttribute("data-listener")) {
-            cardNameInput.setAttribute("data-listener", "true");
-            cardNameInput.addEventListener('focusout', (e) => {
-              cardName = cardNameInput.value;
-                if (cardName.length) {
-                  $.ajax({
-                  url: baseUrl + '/card',
-                  method: 'POST',
-                  data: {
-                    name: cardName,
-                    bootcamp_kanban_column_id: columnId
-                  },
-                  success: function(response) {
-                    const card = new Card(response.id, cardName);
-                    Board.addElement(card.element, e.target.parentNode.children[3]);
-                    addCardButton.style.visibility = "visible";
-                    e.target.style.visibility = "hidden";
-                    cardNameInput.value = '';
-                  }
-                });
-                } else {
+        if (!cardNameInput.hasAttribute("data-listener")) {
+          cardNameInput.setAttribute("data-listener", "true");
+          cardNameInput.addEventListener('keyup', (e) => {
+            cardName = cardNameInput.value;
+            if (e.which === 13 && cardName.length) {
+              $.ajax({
+                url: baseUrl + '/card',
+                method: 'POST',
+                data: {
+                  name: cardName,
+                  bootcamp_kanban_column_id: columnId
+                },
+                success: function(response) {
+                  const card = new Card(response.id, cardName);
+                  Board.addElement(card.element, e.target.parentNode.children[3]);
                   addCardButton.style.visibility = "visible";
                   e.target.style.visibility = "hidden";
-                  alert("Card name to short");
+                  cardNameInput.value = '';
                 }
-            })
-            cardNameInput.addEventListener('keyup', (e) => {
-              
-              cardName = cardNameInput.value;
-              if (e.which === 13 && cardName.length) {
-                $.ajax({
-                  url: baseUrl + '/card',
-                  method: 'POST',
-                  data: {
-                    name: cardName,
-                    bootcamp_kanban_column_id: columnId
-                  },
-                  success: function(response) {
-                    const card = new Card(response.id, cardName);
-                    Board.addElement(card.element, e.target.parentNode.children[3]);
-                    addCardButton.style.visibility = "visible";
-                    e.target.style.visibility = "hidden";
-                    cardNameInput.value = '';
-                  }
-                });
-              } else if (!cardName.length) {
-                addCardButton.style.visibility = "visible";
-                e.target.style.visibility = "hidden";
-                alert("Card name to short");
-              }
-
-            })
-          }
+              });
+            } else if (!cardName.length) {
+              addCardButton.style.visibility = "visible";
+              e.target.style.visibility = "hidden";
+              alert("Card name to short");
+            }
+          })
+        }
         break;
 
       case 'create-column':
+        const columnNameInput = document.getElementById('columnName')
+        columnNameInput.focus();
         showHideAddColumn();
+        columnNameInput.addEventListener('keyup', function(event) {
+          if (event.which === 13) {
+          const newColumnName = columnNameInput.value;
+          $.ajax({
+            url: baseUrl + '/column',
+            method: 'POST',
+            data: {
+              name: newColumnName
+            },
+            success: function(response) {
+              console.log(response)
+              const column = new Column(response.id, newColumnName);
+              Board.addElement(column.element);
+            }
+          });
+          showHideAddColumn('hide');
+          document.getElementById('columnName').value = '';
+          }
+        })
         break;
 
+        
       case 'create-column create-column_add':
         const columnName = document.getElementById('columnName').value
         $.ajax({
@@ -301,14 +294,15 @@ function showHideAddColumn(Hide) {
             Board.addElement(column.element);
           }
         });
-          showHideAddColumn('hide');
-          document.getElementById('columnName').value = '';
+        showHideAddColumn('hide');
+        document.getElementById('columnName').value = '';
         break;
-      
+
       case 'create-column create-column_cancel':
         showHideAddColumn('hide');
         document.getElementById('columnName').value = '';
         break;
+      
 
       case 'column-title':
         let columnTitleElement = e.target;
@@ -318,7 +312,7 @@ function showHideAddColumn(Hide) {
         newNameInput.style.display = 'inline';
         newNameInput.value = columnNameToChange;
         newNameInput.focus();
-        newNameInput.addEventListener('keyup', function () {
+        newNameInput.addEventListener('keyup', function() {
           columnNameToChange = newNameInput.value;
           if (event.which === 13) {
             $.ajax({
@@ -336,7 +330,7 @@ function showHideAddColumn(Hide) {
             });
           }
         });
-        newNameInput.addEventListener('focusout', function () {
+        newNameInput.addEventListener('focusout', function() {
           columnNameToChange = newNameInput.value;
           $.ajax({
             url: baseUrl + '/' + e.target.parentNode.className + '/' + e.target.parentNode.id,
@@ -358,17 +352,17 @@ function showHideAddColumn(Hide) {
         let cardDescriptionElement = e.target;
         let cardDescription = cardDescriptionElement.textContent;
         const newDescriptionInput = cardDescriptionElement.parentNode.children[2];
-        const parentColumnId =  e.target.parentNode.parentNode.parentNode.id;
+        const parentColumnId = e.target.parentNode.parentNode.parentNode.id;
         cardDescriptionElement.style.display = 'none';
         newDescriptionInput.style.display = 'inline';
         newDescriptionInput.value = cardDescription;
         newDescriptionInput.focus();
-        
-        newDescriptionInput.addEventListener('keyup', function (event) {
+
+        newDescriptionInput.addEventListener('keyup', function(event) {
           cardDescription = newDescriptionInput.value;
           if (event.which === 13) {
             $.ajax({
-              url: baseUrl + '/' +  e.target.parentNode.className + '/' +  e.target.parentNode.id,
+              url: baseUrl + '/' + e.target.parentNode.className + '/' + e.target.parentNode.id,
               method: 'PUT',
               data: {
                 name: cardDescription,
@@ -381,13 +375,12 @@ function showHideAddColumn(Hide) {
                 newDescriptionInput.style.display = 'none';
               }
             });
-            
           }
         });
-        newDescriptionInput.addEventListener('focusout', function (event) {
+        newDescriptionInput.addEventListener('focusout', function(event) {
           cardDescription = newDescriptionInput.value;
           $.ajax({
-            url: baseUrl + '/' +  e.target.parentNode.className + '/' +  e.target.parentNode.id,
+            url: baseUrl + '/' + e.target.parentNode.className + '/' + e.target.parentNode.id,
             method: 'PUT',
             data: {
               name: cardDescription,
@@ -403,6 +396,5 @@ function showHideAddColumn(Hide) {
         });
         break;
     }
-
   });
 })()
