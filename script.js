@@ -105,6 +105,7 @@ class Column extends Board {
     columnAddCard.addEventListener('click', (event) => {
       event.target.style.visibility = "hidden";
       event.target.parentNode.children[5].style.visibility = "visible";
+      event.target.parentNode.children[5].focus();
     })
     return columnAddCard;
   }
@@ -118,30 +119,34 @@ class Column extends Board {
     cardName.type = "text";
     cardName.size = "20";
     cardName.maxLength = "23";
-    // cardName.addEventListener('keyup', (event) => {
-      
-    //   if (event.which === 13 && cardName.length) {
-    //     $.ajax({
-    //       url: baseUrl + '/card',
-    //       method: 'POST',
-    //       data: {
-    //         name: cardName,
-    //         bootcamp_kanban_column_id: columnId
-    //       },
-    //       success: (response) => {
-    //         const card = new Card(response.id, cardName);
-    //         Board.addElement(card.element, e.target.parentNode.children[3]);
-    //         elementClicked.style.visibility = "visible";
-    //         event.target.style.visibility = "hidden";
-    //         cardNameInput.value = '';
-    //       }
-    //     });
-    //   } else if (!cardName.length) {
-    //     addCardButton.style.visibility = "visible";
-    //     elementClicked.style.visibility = "hidden";
-    //     alert("Card name to short");
-    //   }
-    // })
+    cardName.addEventListener('keyup', (event) => {
+      if (event.which === 13) {
+        const columnId = event.target.parentNode.id;  
+        const cardNameInput = event.target.parentNode.children[5];
+        let cardName =  event.target.value;
+        if (cardName.length) {
+          $.ajax({
+            url: baseUrl + '/card',
+            method: 'POST',
+            data: {
+              name: cardName,
+              bootcamp_kanban_column_id: columnId
+            },
+            success: (response) => {
+              const card = new Card(response.id, cardName);
+              Board.addElement(card.element, event.target.parentNode.children[3]);
+              event.target.style.visibility = "hidden";
+              event.target.parentNode.children[2].style.visibility = "visible";
+              cardNameInput.value = '';
+            }
+          });
+      } else if (!cardName.length) {
+      event.target.style.visibility = "hidden";
+      event.target.parentNode.children[2].style.visibility = "visible";
+        alert("Card name to short");
+      }
+    }
+    })
     return cardName;
   }
 
@@ -243,40 +248,6 @@ function showHideAddColumn(Hide) {
     switch (elementClicked.className) {
 
  
-      case 'add-card':
-        const columnId = elementClicked.parentNode.id;  
-        const cardNameInput = elementClicked.parentNode.children[5];
-        let cardName = document.getElementById('addCard').value;
-      
-        cardNameInput.focus();
-        if (!cardNameInput.hasAttribute("data-listener")) {
-          cardNameInput.setAttribute("data-listener", "true");
-          cardNameInput.addEventListener('keyup', (event) => {
-            cardName = cardNameInput.value;
-            if (event.which === 13 && cardName.length) {
-              $.ajax({
-                url: baseUrl + '/card',
-                method: 'POST',
-                data: {
-                  name: cardName,
-                  bootcamp_kanban_column_id: columnId
-                },
-                success: (response) => {
-                  const card = new Card(response.id, cardName);
-                  Board.addElement(card.element, e.target.parentNode.children[3]);
-                  elementClicked.style.visibility = "visible";
-                  event.target.style.visibility = "hidden";
-                  cardNameInput.value = '';
-                }
-              });
-            } else if (!cardName.length) {
-              addCardButton.style.visibility = "visible";
-              elementClicked.style.visibility = "hidden";
-              alert("Card name to short");
-            }
-          })
-        }
-        break;
 
       case 'create-column':
         let columnNameInput = document.getElementById('columnName')
