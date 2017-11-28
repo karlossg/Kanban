@@ -158,7 +158,6 @@ function initSortable() {
       const moveCardId = ui.item[0].id
       const moveCardName = ui.item[0].children[1].textContent;
       const targetColumnId = ui.item[0].parentNode.parentNode.id;
-      console.log(moveCardId)
       $.ajax({
         url: baseUrl + '/card',
         method: 'POST',
