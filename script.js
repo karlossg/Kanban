@@ -47,7 +47,7 @@ class Board {
   }
 
   static createDeleteButton() {
-    let deleteButton = document.createElement("button");
+    const deleteButton = document.createElement("button");
     deleteButton.className = "btn-delete";
     deleteButton.textContent = "x";
     deleteButton.addEventListener('click', (event) => {
@@ -72,7 +72,7 @@ class Column extends Board {
   }
 
   createColumn() {
-    let column = document.createElement("div");
+    const column = document.createElement("div");
     column.className = "column";
     column.id = this.id;
     column.appendChild(Board.createDeleteButton());
@@ -85,7 +85,7 @@ class Column extends Board {
   }
 
   createColumnTitle() {
-    let columnTitle = document.createElement("h2");
+    const columnTitle = document.createElement("h2");
     columnTitle.className = "column-title";
     columnTitle.textContent = this.name;
     columnTitle.addEventListener('click', (event) => {
@@ -99,13 +99,13 @@ class Column extends Board {
   }
 
   createColumnCardList() {
-    let columnCardList = document.createElement("ul");
+    const columnCardList = document.createElement("ul");
     columnCardList.className = "column-card-list";
     return columnCardList;
   }
 
   createColumnAddCardButton() {
-    let columnAddCard = document.createElement("button");
+    const columnAddCard = document.createElement("button");
     columnAddCard.className = "add-card";
     columnAddCard.textContent = "Add new card";
     columnAddCard.id = "addCard"
@@ -130,7 +130,7 @@ class Column extends Board {
       if (event.which === 13) {
         const columnId = event.target.parentNode.id;  
         const cardNameInput = event.target.parentNode.children[5];
-        let cardName =  event.target.value;
+        cardName =  event.target.value;
         if (cardName.length) {
           $.ajax({
             url: baseUrl + '/card',
@@ -158,7 +158,7 @@ class Column extends Board {
   }
 
   createColumnChangeName() {
-    let newName = document.createElement("input");
+    const newName = document.createElement("input");
     newName.className = "column-nameChange";
     newName.style.display = "none";
     newName.type = "text";
@@ -199,7 +199,7 @@ class Card extends Board {
   }
 
   createCard() {
-    let card = document.createElement("li");
+    const card = document.createElement("li");
     card.className = "card";
     card.id = this.id;
     card.appendChild(Board.createDeleteButton());
@@ -209,7 +209,7 @@ class Card extends Board {
   }
 
   createCardDescription() {
-    let cardDescription = document.createElement("p");
+    const cardDescription = document.createElement("p");
     cardDescription.className = "card-description";
     cardDescription.textContent = this.name;
     cardDescription.addEventListener('click', (event => {
@@ -223,7 +223,7 @@ class Card extends Board {
   }
 
   createCardChangeName() {
-    let newName = document.createElement("input");
+    const newName = document.createElement("input");
     newName.className = "card-nameChange";
     newName.style.display = "none";
     newName.addEventListener('keyup', event => {
